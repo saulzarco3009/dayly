@@ -1,69 +1,176 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import React, { useEffect } from 'react';
+import { DaylyProvider, useDayly } from '@/context/DaylyContext';
+import { Sidebar } from '@/components/Sidebar';
+import { MobileNav } from '@/components/MobileNav';
+import { Header } from '@/components/Header';
+import { GlobalQuickAddModal } from '@/components/GlobalQuickAddModal';
+
+// Views
+import { OverviewView } from '@/views/OverviewView';
+import { MonthView } from '@/views/MonthView';
+import { WeekView } from '@/views/WeekView';
+import { TodayView } from '@/views/TodayView';
+import { TasksView } from '@/views/TasksView';
+import { ExamsView } from '@/views/ExamsView';
+import { ProjectsView } from '@/views/ProjectsView';
+import { HabitsView } from '@/views/HabitsView';
+import { GoalsView } from '@/views/GoalsView';
+import { RoutinesView } from '@/views/RoutinesView';
+import { NotesView } from '@/views/NotesView';
+import { SettingsView } from '@/views/SettingsView';
+
+function AppContent() {
+  const { activeTab, setActiveTab, openQuickAdd, isLoaded } = useDayly();
+
+  // Global hotkeys (e.g. 'n' for Quick Add, ESC handled in modal)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore if user is currently typing inside an input or textarea
+      const target = e.target as HTMLElement;
+      if (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT'
+      ) {
+        return;
+      }
+
+      if (e.key === 'n' || e.key === 'N') {
+        e.preventDefault();
+        openQuickAdd('task');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [openQuickAdd]);
+
+  const renderActiveView = () => {
+    switch (activeTab) {
+      case 'overview':
+        return <OverviewView />;
+      case 'month':
+        return <MonthView />;
+      case 'week':
+        return <WeekView />;
+      case 'today':
+        return <TodayView />;
+      case 'tasks':
+        return <TasksView />;
+      case 'exams':
+        return <ExamsView />;
+      case 'projects':
+        return <ProjectsView />;
+      case 'habits':
+        return <HabitsView />;
+      case 'goals':
+        return <GoalsView />;
+      case 'routines':
+        return <RoutinesView />;
+      case 'notes':
+        return <NotesView />;
+      case 'settings':
+        return <SettingsView />;
+      default:
+        return <OverviewView />;
+    }
+  };
+
+  const getHeaderMeta = () => {
+    switch (activeTab) {
+      case 'overview':
+        return undefined; // uses default personalized greeting & today's date
+      case 'month':
+        return {
+          title: 'Monthly Planning',
+          subtitle: 'High-level calendar overview of exams, projects, and deadlines.',
+        };
+      case 'week':
+        return {
+          title: 'Weekly Organizer',
+          subtitle: 'Balance your workload across Monday through Sunday.',
+        };
+      case 'today':
+        return {
+          title: 'Daily Planner',
+          subtitle: 'Morning, afternoon, and evening time blocks for peak focus.',
+        };
+      case 'tasks':
+        return {
+          title: 'Task Management',
+          subtitle: 'Complete list of all to-dos, priorities, and deadlines.',
+        };
+      case 'exams':
+        return {
+          title: 'Exams & Study Sessions',
+          subtitle: 'Academic preparation tracking and countdowns.',
+        };
+      case 'projects':
+        return {
+          title: 'Projects & Ventures',
+          subtitle: 'Track milestones, tasks, and deliverables.',
+        };
+      case 'habits':
+        return {
+          title: 'Daily Habits',
+          subtitle: 'Maintain streaks and build consistency.',
+        };
+      case 'goals':
+        return {
+          title: 'Goals & Vision',
+          subtitle: 'Long-term milestones and progressive achievements.',
+        };
+      case 'routines':
+        return {
+          title: 'Routines & Rituals',
+          subtitle: 'Morning, study, work, and evening sequences.',
+        };
+      case 'notes':
+        return {
+          title: 'Notes & Ideas',
+          subtitle: 'Distraction-free thoughts and study concepts.',
+        };
+      case 'settings':
+        return {
+          title: 'Settings & Data',
+          subtitle: 'Preferences and JSON backup management.',
+        };
+      default:
+        return undefined;
+    }
+  };
+
+  const headerMeta = getHeaderMeta();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div className="flex min-h-screen bg-[#FCFAFB]">
+      {/* Desktop Sidebar */}
+      <Sidebar />
+
+      {/* Main Workspace Area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        <Header title={headerMeta?.title} subtitle={headerMeta?.subtitle} />
+
+        <main className="flex-1 px-4 sm:px-8 py-6 max-w-7xl w-full mx-auto">
+          {renderActiveView()}
+        </main>
+      </div>
+
+      {/* Mobile Navigation */}
+      <MobileNav />
+
+      {/* Global Quick Add Modal */}
+      <GlobalQuickAddModal />
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <DaylyProvider>
+      <AppContent />
+    </DaylyProvider>
   );
 }
