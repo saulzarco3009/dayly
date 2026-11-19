@@ -1,6 +1,6 @@
 /**
- * Date Utilities for DAYLY
- * Standardizes all date strings to YYYY-MM-DD local format
+ * Utilidades de Fechas para DAYLY (en español)
+ * Estandariza cadenas de fecha en formato local YYYY-MM-DD
  */
 
 export function getTodayStr(): string {
@@ -23,29 +23,32 @@ export function parseISODate(dateStr: string): Date {
 export function formatFriendlyDate(dateStr: string): string {
   if (!dateStr) return '';
   const d = parseISODate(dateStr);
-  return d.toLocaleDateString('en-US', {
+  const formatted = d.toLocaleDateString('es-ES', {
     weekday: 'short',
     month: 'short',
     day: 'numeric',
   });
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 }
 
 export function formatLongDate(dateStr: string): string {
   if (!dateStr) return '';
   const d = parseISODate(dateStr);
-  return d.toLocaleDateString('en-US', {
+  const formatted = d.toLocaleDateString('es-ES', {
     weekday: 'long',
     month: 'long',
     day: 'numeric',
     year: 'numeric',
   });
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 }
 
 export function formatMonthYear(date: Date): string {
-  return date.toLocaleDateString('en-US', {
+  const formatted = date.toLocaleDateString('es-ES', {
     month: 'long',
     year: 'numeric',
   });
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 }
 
 export function addDays(dateStr: string, days: number): string {
@@ -66,12 +69,11 @@ export function isToday(dateStr: string): boolean {
 }
 
 /**
- * Returns the Monday-to-Sunday dates for the week containing anchorDateStr
+ * Devuelve las fechas de lunes a domingo para la semana que contiene anchorDateStr
  */
 export function getWeekDays(anchorDateStr: string): string[] {
   const d = parseISODate(anchorDateStr);
-  const dayOfWeek = d.getDay(); // 0 is Sunday, 1 is Monday ...
-  // Calculate difference to Monday (Monday = 1)
+  const dayOfWeek = d.getDay(); // 0 es Domingo, 1 es Lunes...
   const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
   
   const monday = new Date(d);
@@ -94,22 +96,20 @@ export interface CalendarDay {
 }
 
 /**
- * Generates calendar grid for a given year and month (0-indexed month)
- * Starting on Monday
+ * Genera la cuadrícula del calendario mensual empezando en lunes
  */
 export function getMonthDays(year: number, month: number): CalendarDay[] {
   const todayStr = getTodayStr();
   const firstDayOfMonth = new Date(year, month, 1);
   const lastDayOfMonth = new Date(year, month + 1, 0);
 
-  // Day of week of 1st day (0 is Sun, 1 is Mon...)
   const firstDayWeekday = firstDayOfMonth.getDay();
-  // Adjust so Monday is 0, Sunday is 6
+  // Lunes es 0, Domingo es 6
   const leadingDaysCount = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
 
   const days: CalendarDay[] = [];
 
-  // Previous month trailing days
+  // Días del mes anterior
   for (let i = leadingDaysCount; i > 0; i--) {
     const prevDate = new Date(year, month, 1 - i);
     const dateStr = formatDateToISO(prevDate);
@@ -121,7 +121,7 @@ export function getMonthDays(year: number, month: number): CalendarDay[] {
     });
   }
 
-  // Current month days
+  // Días del mes actual
   const totalDays = lastDayOfMonth.getDate();
   for (let day = 1; day <= totalDays; day++) {
     const curDate = new Date(year, month, day);
@@ -134,7 +134,7 @@ export function getMonthDays(year: number, month: number): CalendarDay[] {
     });
   }
 
-  // Next month leading days to complete full grid (multiple of 7)
+  // Días del mes siguiente para completar la cuadrícula
   const remaining = (7 - (days.length % 7)) % 7;
   for (let i = 1; i <= remaining; i++) {
     const nextDate = new Date(year, month + 1, i);

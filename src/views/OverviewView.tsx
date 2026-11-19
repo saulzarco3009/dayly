@@ -5,14 +5,9 @@ import {
   CheckCircle2,
   Circle,
   Clock,
-  ArrowRight,
   Plus,
-  Flame,
   GraduationCap,
   Sparkles,
-  Calendar,
-  AlertCircle,
-  Target,
   ChevronRight,
 } from 'lucide-react';
 import { useDayly } from '@/context/DaylyContext';
@@ -22,9 +17,8 @@ import {
   formatFriendlyDate,
   parseISODate,
   getDaysDifference,
-  addDays,
 } from '@/utils/dateUtils';
-import { Priority, Task } from '@/types/dayly';
+import { Priority } from '@/types/dayly';
 
 export function OverviewView() {
   const {
@@ -42,7 +36,7 @@ export function OverviewView() {
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const todayStr = getTodayStr();
 
-  // Tasks for today
+  // Tareas para hoy
   const todayTasks = tasks.filter((t) => t.dueDate === todayStr);
   const completedTodayTasks = todayTasks.filter((t) => t.status === 'completed');
   const pendingTodayTasks = todayTasks.filter((t) => t.status !== 'completed');
@@ -52,7 +46,7 @@ export function OverviewView() {
   const completionPercentage =
     totalToday > 0 ? Math.round((completedToday / totalToday) * 100) : 0;
 
-  // Top 3 Priorities: High priority or flagged isPriority pending tasks
+  // 3 Prioridades Principales de Hoy
   const topPriorities = pendingTodayTasks
     .sort((a, b) => {
       const pScore = (p: Priority) => (p === 'high' ? 3 : p === 'medium' ? 2 : 1);
@@ -60,19 +54,19 @@ export function OverviewView() {
     })
     .slice(0, 3);
 
-  // Upcoming Exams within next 14 days
+  // Próximos exámenes
   const upcomingExams = exams
     .filter((e) => e.status !== 'Completed' && e.examDate >= todayStr)
     .sort((a, b) => a.examDate.localeCompare(b.examDate))
     .slice(0, 3);
 
-  // Upcoming Project Deadlines
+  // Proyectos activos
   const upcomingProjects = projects
     .filter((p) => p.status !== 'Completed' && p.deadline >= todayStr)
     .sort((a, b) => a.deadline.localeCompare(b.deadline))
     .slice(0, 2);
 
-  // 7-day mini calendar
+  // Mini calendario semanal
   const currentWeekDays = getWeekDays(todayStr);
 
   const handleQuickAddTodayTask = (e: React.FormEvent) => {
@@ -91,12 +85,12 @@ export function OverviewView() {
 
   return (
     <div className="space-y-6 sm:space-y-8 animate-fade-in pb-16">
-      {/* SECTION A: TODAY'S OVERVIEW STATS */}
+      {/* SECCIÓN A: RESUMEN DE HOY */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        {/* Progress Card */}
+        {/* Tarjeta de Progreso */}
         <div className="col-span-2 sm:col-span-1 bg-white p-4 sm:p-5 rounded-2xl border border-[#F0EBEF] shadow-2xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-[#928A91]">Daily Progress</span>
+            <span className="text-xs font-medium text-[#928A91]">Progreso Diario</span>
             <span className="text-xs font-semibold text-[#D68EAD]">
               {completionPercentage}%
             </span>
@@ -110,47 +104,47 @@ export function OverviewView() {
             </div>
           </div>
           <div className="mt-3 flex items-center justify-between text-[11px] text-[#928A91]">
-            <span>{completedToday} of {totalToday} tasks done</span>
+            <span>{completedToday} de {totalToday} tareas hechas</span>
             {completionPercentage === 100 && totalToday > 0 && (
               <span className="text-[#78AC8E] font-medium flex items-center">
-                All done! ✨
+                ¡Todo listo! ✨
               </span>
             )}
           </div>
         </div>
 
-        {/* Total Tasks Card */}
+        {/* Tarjeta Total de Tareas */}
         <div className="bg-white p-4 sm:p-5 rounded-2xl border border-[#F0EBEF] shadow-2xs flex flex-col justify-between">
-          <span className="text-xs font-medium text-[#928A91]">Today&apos;s Total</span>
+          <span className="text-xs font-medium text-[#928A91]">Total de Hoy</span>
           <div className="mt-2 flex items-baseline space-x-2">
             <span className="text-2xl sm:text-3xl font-bold tracking-tight text-[#29252B]">
               {totalToday}
             </span>
-            <span className="text-xs text-[#928A91]">scheduled</span>
+            <span className="text-xs text-[#928A91]">programadas</span>
           </div>
           <div className="mt-2 text-[11px] text-[#928A91]">
-            Plan your day carefully
+            Planifica tu jornada con calma
           </div>
         </div>
 
-        {/* Pending Tasks Card */}
+        {/* Tarjeta Tareas Pendientes */}
         <div className="bg-white p-4 sm:p-5 rounded-2xl border border-[#F0EBEF] shadow-2xs flex flex-col justify-between">
-          <span className="text-xs font-medium text-[#928A91]">Pending Focus</span>
+          <span className="text-xs font-medium text-[#928A91]">Pendientes</span>
           <div className="mt-2 flex items-baseline space-x-2">
             <span className="text-2xl sm:text-3xl font-bold tracking-tight text-[#29252B]">
               {pendingTodayTasks.length}
             </span>
-            <span className="text-xs text-[#E5A6C0] font-medium">remaining</span>
+            <span className="text-xs text-[#E5A6C0] font-medium">por hacer</span>
           </div>
           <div className="mt-2 text-[11px] text-[#928A91]">
-            {topPriorities.length > 0 ? `${topPriorities.length} high priority` : 'Smooth pacing'}
+            {topPriorities.length > 0 ? `${topPriorities.length} de alta prioridad` : 'Ritmo equilibrado'}
           </div>
         </div>
 
-        {/* Habits Checked Today */}
+        {/* Hábitos Activos */}
         <div className="bg-white p-4 sm:p-5 rounded-2xl border border-[#F0EBEF] shadow-2xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-[#928A91]">Habits Active</span>
+            <span className="text-xs font-medium text-[#928A91]">Hábitos de Hoy</span>
             <Sparkles size={14} className="text-[#D68EAD]" />
           </div>
           <div className="mt-2 flex items-baseline space-x-2">
@@ -160,12 +154,12 @@ export function OverviewView() {
             </span>
           </div>
           <div className="mt-2 text-[11px] text-[#928A91]">
-            Daily consistency streak
+            Constancia diaria activa
           </div>
         </div>
       </div>
 
-      {/* SECTION E: TOP PRIORITIES */}
+      {/* SECCIÓN E: PRIORIDADES PRINCIPALES */}
       {topPriorities.length > 0 && (
         <div className="bg-[#FBEFF4]/60 border border-[#F0EBEF] rounded-2xl p-4 sm:p-5">
           <div className="flex items-center justify-between mb-3">
@@ -174,10 +168,10 @@ export function OverviewView() {
                 ★
               </div>
               <h2 className="text-xs font-semibold uppercase tracking-wider text-[#29252B]">
-                Today&apos;s Top Priorities
+                Prioridades Clave de Hoy
               </h2>
             </div>
-            <span className="text-[11px] text-[#928A91]">Focus on these first</span>
+            <span className="text-[11px] text-[#928A91]">Enfócate primero en estas</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5">
@@ -214,18 +208,18 @@ export function OverviewView() {
         </div>
       )}
 
-      {/* SECTION B & C: TWO-COLUMN MAIN WORKSPACE */}
+      {/* SECCIÓN B & C: DOS COLUMNAS PRINCIPALES */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* LEFT 2 COLS: TODAY'S TASKS LIST */}
+        {/* COLUMNA IZQUIERDA: LISTA DE TAREAS DE HOY */}
         <div className="lg:col-span-2 space-y-4">
           <div className="bg-white rounded-2xl border border-[#F0EBEF] shadow-2xs p-5 sm:p-6">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-base font-semibold text-[#29252B]">
-                  Today&apos;s Tasks
+                  Tareas de Hoy
                 </h2>
                 <p className="text-xs text-[#928A91]">
-                  Organized for today &middot; {todayTasks.length} total
+                  Organizadas para hoy &middot; {todayTasks.length} en total
                 </p>
               </div>
 
@@ -233,19 +227,19 @@ export function OverviewView() {
                 onClick={() => setActiveTab('today')}
                 className="text-xs font-medium text-[#D68EAD] hover:text-[#29252B] flex items-center space-x-1 transition-colors"
               >
-                <span>Planner View</span>
+                <span>Planificador Diario</span>
                 <ChevronRight size={14} />
               </button>
             </div>
 
-            {/* Quick inline task creator */}
+            {/* Añadir tarea rápida */}
             <form
               onSubmit={handleQuickAddTodayTask}
               className="flex items-center space-x-2 mb-4"
             >
               <input
                 type="text"
-                placeholder="Add a task for today..."
+                placeholder="Añade una tarea para hoy..."
                 value={newTaskTitle}
                 onChange={(e) => setNewTaskTitle(e.target.value)}
                 className="flex-1 px-3.5 py-2 text-xs rounded-xl border border-[#F0EBEF] focus:outline-none focus:border-[#E5A6C0] bg-[#FCFAFB] focus:bg-white transition-colors"
@@ -255,21 +249,21 @@ export function OverviewView() {
                 className="px-3 py-2 bg-[#FBEFF4] hover:bg-[#F7EAF0] text-[#29252B] border border-[#F0EBEF] hover:border-[#E5A6C0] rounded-xl text-xs font-medium flex items-center space-x-1 transition-all active:scale-98"
               >
                 <Plus size={14} className="text-[#D68EAD]" />
-                <span className="hidden sm:inline">Add</span>
+                <span className="hidden sm:inline">Añadir</span>
               </button>
             </form>
 
-            {/* Tasks list */}
+            {/* Lista de tareas */}
             {todayTasks.length === 0 ? (
               <div className="text-center py-10 px-4 rounded-xl border border-dashed border-[#F0EBEF] bg-[#FCFAFB]">
                 <p className="text-xs text-[#928A91] mb-2">
-                  No tasks scheduled for today yet.
+                  No hay tareas programadas para hoy todavía.
                 </p>
                 <button
                   onClick={() => openQuickAdd('task')}
                   className="text-xs font-medium text-[#D68EAD] hover:underline"
                 >
-                  Create your first task
+                  Crear tu primera tarea
                 </button>
               </div>
             ) : (
@@ -330,7 +324,11 @@ export function OverviewView() {
                                   : 'bg-[#FCFAFB] text-[#928A91] border border-[#F0EBEF]'
                               }`}
                             >
-                              {task.priority}
+                              {task.priority === 'high'
+                                ? 'Alta'
+                                : task.priority === 'medium'
+                                ? 'Media'
+                                : 'Baja'}
                             </span>
 
                             <span className="text-[10px] text-[#928A91] bg-[#FCFAFB] px-1.5 py-0.5 rounded border border-[#F0EBEF]">
@@ -338,8 +336,13 @@ export function OverviewView() {
                             </span>
 
                             {task.timeSlot && (
-                              <span className="text-[10px] text-[#D68EAD] capitalize">
-                                &middot; {task.timeSlot}
+                              <span className="text-[10px] text-[#D68EAD]">
+                                &middot;{' '}
+                                {task.timeSlot === 'morning'
+                                  ? 'Mañana'
+                                  : task.timeSlot === 'afternoon'
+                                  ? 'Tarde'
+                                  : 'Noche'}
                               </span>
                             )}
                           </div>
@@ -352,22 +355,22 @@ export function OverviewView() {
             )}
           </div>
 
-          {/* SECTION D: WEEKLY MINI CALENDAR OVERVIEW */}
+          {/* SECCIÓN D: MINI CALENDARIO SEMANAL */}
           <div className="bg-white rounded-2xl border border-[#F0EBEF] shadow-2xs p-5 sm:p-6">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="text-sm font-semibold text-[#29252B]">
-                  Weekly Overview
+                  Vista Semanal
                 </h3>
                 <p className="text-xs text-[#928A91]">
-                  Workload and scheduled activities
+                  Carga de trabajo y actividades previstas
                 </p>
               </div>
               <button
                 onClick={() => setActiveTab('week')}
                 className="text-xs font-medium text-[#D68EAD] hover:text-[#29252B] flex items-center space-x-1"
               >
-                <span>Full Week</span>
+                <span>Semana Completa</span>
                 <ChevronRight size={14} />
               </button>
             </div>
@@ -375,14 +378,13 @@ export function OverviewView() {
             <div className="grid grid-cols-7 gap-2">
               {currentWeekDays.map((dateStr) => {
                 const dayDate = parseISODate(dateStr);
-                const dayName = dayDate.toLocaleDateString('en-US', {
+                const dayName = dayDate.toLocaleDateString('es-ES', {
                   weekday: 'narrow',
                 });
                 const dayNum = dayDate.getDate();
                 const isCurrent = dateStr === todayStr;
 
                 const dayTasks = tasks.filter((t) => t.dueDate === dateStr);
-                const dayCompleted = dayTasks.filter((t) => t.status === 'completed');
                 const hasExams = exams.some((e) => e.examDate === dateStr);
 
                 return (
@@ -430,28 +432,28 @@ export function OverviewView() {
           </div>
         </div>
 
-        {/* RIGHT COL: UPCOMING EXAMS & DEADLINES */}
+        {/* COLUMNA DERECHA: EXÁMENES Y PROYECTOS */}
         <div className="space-y-4">
-          {/* UPCOMING EXAMS WIDGET */}
+          {/* PRÓXIMOS EXÁMENES */}
           <div className="bg-white rounded-2xl border border-[#F0EBEF] shadow-2xs p-5">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center space-x-2">
                 <GraduationCap size={16} className="text-[#D68EAD]" />
                 <h3 className="text-sm font-semibold text-[#29252B]">
-                  Upcoming Exams
+                  Próximos Exámenes
                 </h3>
               </div>
               <button
                 onClick={() => setActiveTab('exams')}
                 className="text-xs text-[#D68EAD] hover:underline"
               >
-                View all
+                Ver todos
               </button>
             </div>
 
             {upcomingExams.length === 0 ? (
               <p className="text-xs text-[#928A91] py-4 text-center">
-                No upcoming exams scheduled.
+                No hay exámenes programados.
               </p>
             ) : (
               <div className="space-y-3">
@@ -486,18 +488,19 @@ export function OverviewView() {
                               : 'bg-[#FBEFF4] text-[#D68EAD]'
                           }`}
                         >
-                          {daysLeft === 0
-                            ? 'Today!'
+                          {daysLeft < 0
+                            ? 'Pasado'
+                            : daysLeft === 0
+                            ? '¡Hoy!'
                             : daysLeft === 1
-                            ? 'Tomorrow'
-                            : `${daysLeft} days left`}
+                            ? 'Mañana'
+                            : `${daysLeft} días restantes`}
                         </span>
                       </div>
 
-                      {/* Prep progress */}
                       <div className="mt-2.5">
                         <div className="flex items-center justify-between text-[10px] text-[#928A91] mb-1">
-                          <span>Topics prepared</span>
+                          <span>Temas preparados</span>
                           <span className="font-semibold">{prepPercent}%</span>
                         </div>
                         <div className="w-full h-1.5 rounded-full bg-white border border-[#F0EBEF] overflow-hidden">
@@ -514,23 +517,23 @@ export function OverviewView() {
             )}
           </div>
 
-          {/* PROJECT DEADLINES WIDGET */}
+          {/* PROYECTOS ACTIVOS */}
           <div className="bg-white rounded-2xl border border-[#F0EBEF] shadow-2xs p-5">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-semibold text-[#29252B]">
-                Active Projects
+                Proyectos Activos
               </h3>
               <button
                 onClick={() => setActiveTab('projects')}
                 className="text-xs text-[#D68EAD] hover:underline"
               >
-                View all
+                Ver todos
               </button>
             </div>
 
             {upcomingProjects.length === 0 ? (
               <p className="text-xs text-[#928A91] py-4 text-center">
-                No active projects.
+                No hay proyectos activos.
               </p>
             ) : (
               <div className="space-y-3">
@@ -550,7 +553,7 @@ export function OverviewView() {
                           {project.name}
                         </h4>
                         <span className="text-[10px] text-[#928A91] shrink-0">
-                          Due {formatFriendlyDate(project.deadline)}
+                          Límite {formatFriendlyDate(project.deadline)}
                         </span>
                       </div>
                       <p className="text-[11px] text-[#928A91] line-clamp-1 mt-1">
@@ -572,13 +575,13 @@ export function OverviewView() {
             )}
           </div>
 
-          {/* MINIMAL MOTIVATIONAL NOTE */}
+          {/* NOTA DE FILOSOFÍA */}
           <div className="p-4 rounded-2xl border border-[#F0EBEF] bg-gradient-to-br from-white to-[#FCFAFB] text-center">
             <span className="text-[10px] uppercase font-bold tracking-widest text-[#D68EAD]">
-              Philosophy
+              Filosofía
             </span>
             <p className="text-xs text-[#29252B] font-medium mt-1 italic">
-              &ldquo;Plan your month. Organize your week. Focus on today.&rdquo;
+              &ldquo;Planifica tu mes. Organiza tu semana. Enfócate en hoy.&rdquo;
             </p>
           </div>
         </div>

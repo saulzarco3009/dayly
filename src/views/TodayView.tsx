@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import {
   Sun,
   Sunrise,
-  Sunset,
   Moon,
   Plus,
   CheckCircle2,
@@ -13,18 +12,12 @@ import {
   Trash2,
   Edit2,
   Sparkles,
-  ArrowRight,
   ChevronLeft,
   ChevronRight,
-  Heart,
-  Smile,
-  Meh,
-  Frown,
 } from 'lucide-react';
 import { useDayly } from '@/context/DaylyContext';
 import {
   formatLongDate,
-  formatFriendlyDate,
   getTodayStr,
   addDays,
 } from '@/utils/dateUtils';
@@ -46,7 +39,6 @@ export function TodayView() {
   const todayStr = getTodayStr();
   const currentDate = selectedDate || todayStr;
 
-  // Reflection state for this date
   const reflection = reflections[currentDate] || {
     date: currentDate,
     wentWell: '',
@@ -58,7 +50,6 @@ export function TodayView() {
   const [improveText, setImproveText] = useState(reflection.improveTomorrow);
   const [currentMood, setCurrentMood] = useState(reflection.mood || 'good');
 
-  // Update local inputs when date changes
   useEffect(() => {
     const curRef = reflections[currentDate];
     setWentWellText(curRef?.wentWell || '');
@@ -66,26 +57,21 @@ export function TodayView() {
     setCurrentMood(curRef?.mood || 'good');
   }, [currentDate, reflections]);
 
-  // Tasks for the selected date
   const dayTasks = tasks.filter((t) => t.dueDate === currentDate);
   const completedTasks = dayTasks.filter((t) => t.status === 'completed');
-  const pendingTasks = dayTasks.filter((t) => t.status !== 'completed');
 
   const total = dayTasks.length;
   const completed = completedTasks.length;
   const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
 
-  // Split tasks by timeSlot (default to morning if undefined)
   const morningTasks = dayTasks.filter((t) => (t.timeSlot || 'morning') === 'morning');
   const afternoonTasks = dayTasks.filter((t) => t.timeSlot === 'afternoon');
   const eveningTasks = dayTasks.filter((t) => t.timeSlot === 'evening');
 
-  // Inline add state
   const [activeSlotInput, setActiveSlotInput] = useState<TimeSlot | null>(null);
   const [slotTaskTitle, setSlotTaskTitle] = useState('');
   const [slotTaskTime, setSlotTaskTime] = useState('');
 
-  // Edit task modal
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   const handleCreateSlotTask = (slot: TimeSlot) => {
@@ -122,7 +108,7 @@ export function TodayView() {
   ) => {
     return (
       <div className="bg-white rounded-2xl border border-[#F0EBEF] shadow-2xs p-5 transition-all">
-        {/* Section Header */}
+        {/* Cabecera de la franja */}
         <div className="flex items-center justify-between pb-3 border-b border-[#F0EBEF] mb-3">
           <div className="flex items-center space-x-2.5">
             <div className="w-8 h-8 rounded-xl bg-[#FCFAFB] border border-[#F0EBEF] flex items-center justify-center text-[#D68EAD]">
@@ -135,15 +121,15 @@ export function TodayView() {
           </div>
 
           <span className="text-xs text-[#928A91] font-medium bg-[#FCFAFB] px-2 py-0.5 rounded-lg border border-[#F0EBEF]">
-            {slotTasks.length} {slotTasks.length === 1 ? 'task' : 'tasks'}
+            {slotTasks.length} {slotTasks.length === 1 ? 'tarea' : 'tareas'}
           </span>
         </div>
 
-        {/* Tasks in Slot */}
+        {/* Tareas en la franja */}
         <div className="space-y-2">
           {slotTasks.length === 0 ? (
             <div className="py-5 text-center text-xs text-[#928A91] italic bg-[#FCFAFB]/50 rounded-xl border border-dashed border-[#F0EBEF]">
-              No tasks scheduled for {title.toLowerCase()}.
+              No hay tareas para la {title.toLowerCase()}.
             </div>
           ) : (
             slotTasks.map((task) => {
@@ -194,7 +180,7 @@ export function TodayView() {
                               : 'bg-[#FCFAFB] text-[#928A91]'
                           }`}
                         >
-                          {task.priority}
+                          {task.priority === 'high' ? 'Alta' : task.priority === 'medium' ? 'Media' : 'Baja'}
                         </span>
                         <span className="text-[#928A91] bg-[#FCFAFB] px-1.5 py-0.2 rounded border border-[#F0EBEF]">
                           {task.category}
@@ -203,26 +189,25 @@ export function TodayView() {
                     </div>
                   </div>
 
-                  {/* Actions: Slot Switcher & Delete */}
+                  {/* Acciones de franja */}
                   <div className="opacity-0 group-hover:opacity-100 flex items-center space-x-1.5 transition-opacity">
-                    {/* Move to another time slot */}
                     <select
                       value={task.timeSlot || 'morning'}
                       onChange={(e) =>
                         updateTask(task.id, { timeSlot: e.target.value as TimeSlot })
                       }
                       className="text-[10px] bg-[#FCFAFB] border border-[#F0EBEF] rounded-lg px-1.5 py-1 text-[#928A91] hover:text-[#29252B]"
-                      title="Move to another time block"
+                      title="Mover a otra franja horaria"
                     >
-                      <option value="morning">Morning</option>
-                      <option value="afternoon">Afternoon</option>
-                      <option value="evening">Evening</option>
+                      <option value="morning">Mañana</option>
+                      <option value="afternoon">Tarde</option>
+                      <option value="evening">Noche</option>
                     </select>
 
                     <button
                       onClick={() => setEditingTask(task)}
                       className="p-1 text-[#928A91] hover:text-[#29252B] transition-colors"
-                      title="Edit task"
+                      title="Editar tarea"
                     >
                       <Edit2 size={13} />
                     </button>
@@ -230,7 +215,7 @@ export function TodayView() {
                     <button
                       onClick={() => deleteTask(task.id)}
                       className="p-1 text-[#928A91] hover:text-[#DF7682] transition-colors"
-                      title="Delete task"
+                      title="Eliminar tarea"
                     >
                       <Trash2 size={13} />
                     </button>
@@ -241,13 +226,13 @@ export function TodayView() {
           )}
         </div>
 
-        {/* Inline Add Task for Slot */}
+        {/* Añadir tarea rápida a la franja */}
         {activeSlotInput === slot ? (
           <div className="mt-3 pt-3 border-t border-[#F0EBEF] space-y-2">
             <input
               type="text"
               autoFocus
-              placeholder={`Add task to ${title}...`}
+              placeholder={`Añadir tarea a la ${title.toLowerCase()}...`}
               value={slotTaskTitle}
               onChange={(e) => setSlotTaskTitle(e.target.value)}
               onKeyDown={(e) => {
@@ -269,14 +254,14 @@ export function TodayView() {
                   onClick={() => setActiveSlotInput(null)}
                   className="text-xs text-[#928A91] hover:text-[#29252B]"
                 >
-                  Cancel
+                  Cancelar
                 </button>
                 <button
                   type="button"
                   onClick={() => handleCreateSlotTask(slot)}
                   className="text-xs font-semibold px-3 py-1 bg-[#FBEFF4] hover:bg-[#F7EAF0] text-[#29252B] border border-[#E5A6C0] rounded-lg"
                 >
-                  Add
+                  Añadir
                 </button>
               </div>
             </div>
@@ -291,7 +276,7 @@ export function TodayView() {
             className="w-full mt-3 py-2 text-xs font-medium text-[#928A91] hover:text-[#D68EAD] hover:bg-[#FCFAFB] rounded-xl border border-dashed border-[#F0EBEF] flex items-center justify-center space-x-1 transition-all"
           >
             <Plus size={13} />
-            <span>Add task to {title}</span>
+            <span>Añadir tarea a {title.toLowerCase()}</span>
           </button>
         )}
       </div>
@@ -300,7 +285,7 @@ export function TodayView() {
 
   return (
     <div className="space-y-6 sm:space-y-8 animate-fade-in pb-16">
-      {/* Date Header & Stepper */}
+      {/* Encabezado del Día */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-4 sm:p-5 rounded-2xl border border-[#F0EBEF] shadow-2xs">
         <div>
           <div className="flex items-center space-x-2">
@@ -309,12 +294,12 @@ export function TodayView() {
             </h2>
             {currentDate === todayStr && (
               <span className="text-[10px] font-bold uppercase bg-[#E5A6C0] text-white px-2 py-0.5 rounded-full">
-                Today
+                Hoy
               </span>
             )}
           </div>
           <p className="text-xs text-[#928A91] mt-0.5">
-            {completed} of {total} tasks completed &middot; {percent}% daily progress
+            {completed} de {total} tareas completadas &middot; {percent}% de progreso diario
           </p>
         </div>
 
@@ -324,7 +309,7 @@ export function TodayView() {
               onClick={() => setSelectedDate(todayStr)}
               className="text-xs font-semibold text-[#D68EAD] bg-[#FBEFF4] hover:bg-[#F7EAF0] px-3 py-1.5 rounded-xl border border-[#F0EBEF] transition-colors"
             >
-              Back to Today
+              Volver a Hoy
             </button>
           )}
 
@@ -332,14 +317,14 @@ export function TodayView() {
             <button
               onClick={() => setSelectedDate(addDays(currentDate, -1))}
               className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white text-[#928A91] hover:text-[#29252B] transition-colors"
-              title="Previous day"
+              title="Día anterior"
             >
               <ChevronLeft size={16} />
             </button>
             <button
               onClick={() => setSelectedDate(addDays(currentDate, 1))}
               className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white text-[#928A91] hover:text-[#29252B] transition-colors"
-              title="Next day"
+              title="Día siguiente"
             >
               <ChevronRight size={16} />
             </button>
@@ -347,7 +332,7 @@ export function TodayView() {
         </div>
       </div>
 
-      {/* Progress Bar Header */}
+      {/* Barra de Progreso */}
       <div className="w-full h-2 rounded-full bg-white border border-[#F0EBEF] overflow-hidden">
         <div
           className="h-full bg-[#E5A6C0] rounded-full transition-all duration-500 ease-out"
@@ -355,24 +340,24 @@ export function TodayView() {
         />
       </div>
 
-      {/* 3 TIME SECTIONS: MORNING, AFTERNOON, EVENING */}
+      {/* 3 FRANJAS DEL DÍA: MAÑANA, TARDE, NOCHE */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {renderSlotSection(
-          'Morning Focus',
+          'Enfoque Mañana',
           'morning',
           morningTasks,
           <Sunrise size={18} />,
           '06:00 – 12:00'
         )}
         {renderSlotSection(
-          'Afternoon Momentum',
+          'Impulso Tarde',
           'afternoon',
           afternoonTasks,
           <Sun size={18} />,
           '12:00 – 18:00'
         )}
         {renderSlotSection(
-          'Evening Wind-Down',
+          'Cierre Noche',
           'evening',
           eveningTasks,
           <Moon size={18} />,
@@ -380,30 +365,30 @@ export function TodayView() {
         )}
       </div>
 
-      {/* DAILY REFLECTION SECTION */}
+      {/* SECCIÓN DE REFLEXIÓN DIARIA */}
       <div className="bg-white rounded-2xl border border-[#F0EBEF] shadow-2xs p-5 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5 pb-4 border-b border-[#F0EBEF]">
           <div>
             <div className="flex items-center space-x-2">
               <Sparkles size={16} className="text-[#D68EAD]" />
               <h3 className="text-base font-semibold text-[#29252B]">
-                Daily Reflection & Mindset
+                Reflexión Diaria y Mentalidad
               </h3>
             </div>
             <p className="text-xs text-[#928A91] mt-0.5">
-              Pause for 2 minutes to synthesize today&apos;s learnings and reset for tomorrow.
+              Dedica 2 minutos a sintetizar los aprendizajes de hoy y recargar energías para mañana.
             </p>
           </div>
 
-          {/* Mood Selector */}
+          {/* Selector de Ánimo */}
           <div className="flex items-center space-x-2">
-            <span className="text-xs font-medium text-[#928A91]">Today&apos;s Mood:</span>
+            <span className="text-xs font-medium text-[#928A91]">Ánimo de hoy:</span>
             <div className="flex items-center space-x-1 bg-[#FCFAFB] p-1 rounded-xl border border-[#F0EBEF]">
               {[
-                { id: 'great', label: 'Great', emoji: '✨' },
-                { id: 'good', label: 'Good', emoji: '🌿' },
-                { id: 'neutral', label: 'Calm', emoji: '☕' },
-                { id: 'tired', label: 'Tired', emoji: '🌙' },
+                { id: 'great', label: 'Excelente', emoji: '✨' },
+                { id: 'good', label: 'Bien', emoji: '🌿' },
+                { id: 'neutral', label: 'Calma', emoji: '☕' },
+                { id: 'tired', label: 'Cansado', emoji: '🌙' },
               ].map((m) => (
                 <button
                   key={m.id}
@@ -434,11 +419,11 @@ export function TodayView() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
             <label className="block text-xs font-semibold text-[#29252B] mb-1.5">
-              1. What went well today?
+              1. ¿Qué salió bien hoy?
             </label>
             <textarea
               rows={3}
-              placeholder="Reflect on key wins, moments of deep focus, or gratitude..."
+              placeholder="Reflexiona sobre logros, avances con buena concentración o motivos de gratitud..."
               value={wentWellText}
               onChange={(e) => setWentWellText(e.target.value)}
               onBlur={handleSaveReflection}
@@ -448,11 +433,11 @@ export function TodayView() {
 
           <div>
             <label className="block text-xs font-semibold text-[#29252B] mb-1.5">
-              2. What should I improve tomorrow?
+              2. ¿Qué debería mejorar mañana?
             </label>
             <textarea
               rows={3}
-              placeholder="What could be streamlined, simplified, or adjusted tomorrow?..."
+              placeholder="¿Qué podrías simplificar, reordenar o enfocar mejor mañana?..."
               value={improveText}
               onChange={(e) => setImproveText(e.target.value)}
               onBlur={handleSaveReflection}
@@ -462,17 +447,17 @@ export function TodayView() {
         </div>
 
         <div className="mt-4 flex items-center justify-between text-[11px] text-[#928A91]">
-          <span>Notes are saved locally & automatically</span>
+          <span>Las notas se guardan de forma local e inmediata</span>
           <button
             onClick={handleSaveReflection}
             className="text-xs font-semibold text-[#D68EAD] hover:underline"
           >
-            Save Reflection
+            Guardar Reflexión
           </button>
         </div>
       </div>
 
-      {/* EDIT TASK MODAL */}
+      {/* MODAL DE EDICIÓN DE TAREA */}
       {editingTask && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
@@ -480,10 +465,10 @@ export function TodayView() {
             onClick={() => setEditingTask(null)}
           />
           <div className="relative w-full max-w-md bg-white rounded-2xl shadow-xl border border-[#F0EBEF] p-6 z-10 space-y-4">
-            <h3 className="text-sm font-semibold text-[#29252B]">Edit Task</h3>
+            <h3 className="text-sm font-semibold text-[#29252B]">Editar Tarea</h3>
             <div>
               <label className="block text-xs font-medium text-[#29252B] mb-1">
-                Title
+                Título
               </label>
               <input
                 type="text"
@@ -497,7 +482,7 @@ export function TodayView() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-medium text-[#29252B] mb-1">
-                  Time Slot
+                  Franja del Día
                 </label>
                 <select
                   value={editingTask.timeSlot || 'morning'}
@@ -509,14 +494,14 @@ export function TodayView() {
                   }
                   className="w-full px-2.5 py-2 text-xs rounded-xl border border-[#F0EBEF]"
                 >
-                  <option value="morning">Morning</option>
-                  <option value="afternoon">Afternoon</option>
-                  <option value="evening">Evening</option>
+                  <option value="morning">Mañana</option>
+                  <option value="afternoon">Tarde</option>
+                  <option value="evening">Noche</option>
                 </select>
               </div>
               <div>
                 <label className="block text-xs font-medium text-[#29252B] mb-1">
-                  Priority
+                  Prioridad
                 </label>
                 <select
                   value={editingTask.priority}
@@ -528,9 +513,9 @@ export function TodayView() {
                   }
                   className="w-full px-2.5 py-2 text-xs rounded-xl border border-[#F0EBEF]"
                 >
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
+                  <option value="low">Baja</option>
+                  <option value="medium">Media</option>
+                  <option value="high">Alta</option>
                 </select>
               </div>
             </div>
@@ -540,7 +525,7 @@ export function TodayView() {
                 onClick={() => setEditingTask(null)}
                 className="px-3 py-1.5 text-xs text-[#928A91]"
               >
-                Cancel
+                Cancelar
               </button>
               <button
                 type="button"
@@ -550,7 +535,7 @@ export function TodayView() {
                 }}
                 className="px-4 py-1.5 text-xs font-semibold bg-[#FBEFF4] border border-[#E5A6C0] text-[#29252B] rounded-xl"
               >
-                Save
+                Guardar
               </button>
             </div>
           </div>

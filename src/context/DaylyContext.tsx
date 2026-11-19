@@ -17,18 +17,18 @@ import {
 import { getTodayStr, addDays, getDaysDifference } from '@/utils/dateUtils';
 import { getInitialSeedData } from '@/utils/seedData';
 
-const STORAGE_KEY = 'dayly_productivity_v1';
+const STORAGE_KEY = 'dayly_productivity_es_v1';
 
 export type QuickAddType = 'task' | 'exam' | 'project' | 'habit' | 'goal' | 'note';
 
 interface DaylyContextType {
-  // Navigation
+  // Navegación
   activeTab: NavTab;
   setActiveTab: (tab: NavTab) => void;
   selectedDate: string;
   setSelectedDate: (date: string) => void;
 
-  // Data
+  // Datos
   tasks: Task[];
   exams: Exam[];
   projects: Project[];
@@ -40,59 +40,59 @@ interface DaylyContextType {
   settings: UserSettings;
   isLoaded: boolean;
 
-  // Quick Add Modal
+  // Modal de Creación Rápida
   quickAddOpen: boolean;
   quickAddType: QuickAddType;
   openQuickAdd: (type?: QuickAddType) => void;
   closeQuickAdd: () => void;
 
-  // Task Operations
+  // Operaciones de Tareas
   addTask: (task: Omit<Task, 'id' | 'createdAt'>) => Task;
   updateTask: (id: string, updates: Partial<Task>) => void;
   deleteTask: (id: string) => void;
   toggleTaskComplete: (id: string) => void;
   moveTaskDay: (id: string, newDate: string) => void;
 
-  // Exam Operations
+  // Operaciones de Exámenes
   addExam: (exam: Omit<Exam, 'id' | 'createdAt'>) => Exam;
   updateExam: (id: string, updates: Partial<Exam>) => void;
   deleteExam: (id: string) => void;
   toggleExamTopic: (examId: string, topicId: string) => void;
   breakExamIntoStudySessions: (examId: string, sessionsCount: number) => void;
 
-  // Project Operations
+  // Operaciones de Proyectos
   addProject: (project: Omit<Project, 'id' | 'createdAt'>) => Project;
   updateProject: (id: string, updates: Partial<Project>) => void;
   deleteProject: (id: string) => void;
   toggleProjectMilestone: (projectId: string, milestoneId: string) => void;
 
-  // Habit Operations
+  // Operaciones de Hábitos
   addHabit: (habit: Omit<Habit, 'id' | 'createdAt' | 'history'>) => Habit;
   updateHabit: (id: string, updates: Partial<Habit>) => void;
   deleteHabit: (id: string) => void;
   toggleHabitForDate: (habitId: string, dateStr: string) => void;
 
-  // Goal Operations
+  // Operaciones de Objetivos
   addGoal: (goal: Omit<Goal, 'id' | 'createdAt'>) => Goal;
   updateGoal: (id: string, updates: Partial<Goal>) => void;
   deleteGoal: (id: string) => void;
   toggleGoalMilestone: (goalId: string, milestoneId: string) => void;
 
-  // Routine Operations
+  // Operaciones de Rutinas
   addRoutine: (routine: Omit<Routine, 'id' | 'createdAt' | 'completions'>) => Routine;
   updateRoutine: (id: string, updates: Partial<Routine>) => void;
   deleteRoutine: (id: string) => void;
   toggleRoutineStep: (routineId: string, stepId: string, dateStr: string) => void;
 
-  // Reflection Operations
+  // Reflexión diaria
   saveDailyReflection: (reflection: DailyReflection) => void;
 
-  // Note Operations
+  // Notas
   addNote: (note: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>) => Note;
   updateNote: (id: string, updates: Partial<Note>) => void;
   deleteNote: (id: string) => void;
 
-  // Settings & Storage
+  // Configuración y Almacenamiento
   updateSettings: (updates: Partial<UserSettings>) => void;
   exportData: () => string;
   importData: (jsonData: string) => boolean;
@@ -106,11 +106,9 @@ export function DaylyProvider({ children }: { children: React.ReactNode }) {
   const [selectedDate, setSelectedDate] = useState<string>(getTodayStr());
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Quick Add Modal state
   const [quickAddOpen, setQuickAddOpen] = useState(false);
   const [quickAddType, setQuickAddType] = useState<QuickAddType>('task');
 
-  // Core entities state
   const [tasks, setTasks] = useState<Task[]>([]);
   const [exams, setExams] = useState<Exam[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -126,10 +124,10 @@ export function DaylyProvider({ children }: { children: React.ReactNode }) {
     defaultTaskPriority: 'medium',
   });
 
-  // Load from LocalStorage on mount
+  // Cargar de LocalStorage
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
+      const stored = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('dayly_productivity_v1');
       if (stored) {
         const parsed = JSON.parse(stored);
         if (parsed.tasks && parsed.exams && parsed.projects) {
@@ -152,10 +150,9 @@ export function DaylyProvider({ children }: { children: React.ReactNode }) {
         }
       }
     } catch (e) {
-      console.warn('Failed to parse stored DAYLY data, using seed data:', e);
+      console.warn('Error al leer datos guardados de DAYLY, cargando datos semilla:', e);
     }
 
-    // Default seed data
     const seed = getInitialSeedData();
     setTasks(seed.tasks);
     setExams(seed.exams);
@@ -169,7 +166,7 @@ export function DaylyProvider({ children }: { children: React.ReactNode }) {
     setIsLoaded(true);
   }, []);
 
-  // Save to LocalStorage immediately on any state change after initial load
+  // Guardar inmediatamente tras cualquier cambio
   useEffect(() => {
     if (!isLoaded) return;
     try {
@@ -188,11 +185,10 @@ export function DaylyProvider({ children }: { children: React.ReactNode }) {
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
     } catch (e) {
-      console.error('Error saving DAYLY data to LocalStorage:', e);
+      console.error('Error al guardar datos de DAYLY en LocalStorage:', e);
     }
   }, [tasks, exams, projects, habits, goals, routines, reflections, notes, settings, isLoaded]);
 
-  // Subtle celebratory confetti
   const triggerCelebration = useCallback(() => {
     try {
       confetti({
@@ -203,11 +199,10 @@ export function DaylyProvider({ children }: { children: React.ReactNode }) {
         disableForReducedMotion: true,
       });
     } catch {
-      // Ignore if unavailable
+      // Ignorar si no está disponible
     }
   }, []);
 
-  // Quick Add helpers
   const openQuickAdd = useCallback((type: QuickAddType = 'task') => {
     setQuickAddType(type);
     setQuickAddOpen(true);
@@ -217,7 +212,7 @@ export function DaylyProvider({ children }: { children: React.ReactNode }) {
     setQuickAddOpen(false);
   }, []);
 
-  // --- Task Methods ---
+  // --- Tareas ---
   const addTask = useCallback((taskData: Omit<Task, 'id' | 'createdAt'>): Task => {
     const newTask: Task = {
       ...taskData,
@@ -261,7 +256,7 @@ export function DaylyProvider({ children }: { children: React.ReactNode }) {
     );
   }, []);
 
-  // --- Exam Methods ---
+  // --- Exámenes ---
   const addExam = useCallback((examData: Omit<Exam, 'id' | 'createdAt'>): Exam => {
     const newExam: Exam = {
       ...examData,
@@ -280,7 +275,6 @@ export function DaylyProvider({ children }: { children: React.ReactNode }) {
 
   const deleteExam = useCallback((id: string) => {
     setExams((prev) => prev.filter((e) => e.id !== id));
-    // Also decouple associated study tasks
     setTasks((prev) =>
       prev.map((t) => (t.examId === id ? { ...t, examId: undefined } : t))
     );
@@ -306,10 +300,6 @@ export function DaylyProvider({ children }: { children: React.ReactNode }) {
     );
   }, [triggerCelebration]);
 
-  /**
-   * Break an exam into study sessions distributed across the days
-   * leading up to the exam! Automatically creates tasks linked to the exam.
-   */
   const breakExamIntoStudySessions = useCallback(
     (examId: string, sessionsCount: number) => {
       const exam = exams.find((e) => e.id === examId);
@@ -324,7 +314,6 @@ export function DaylyProvider({ children }: { children: React.ReactNode }) {
       const newStudyTaskIds: string[] = [];
 
       for (let i = 1; i <= count; i++) {
-        // Distribute sessions across available days
         const dayOffset = Math.min(
           daysUntil,
           Math.floor((i * effectiveDays) / (count + 1))
@@ -333,17 +322,17 @@ export function DaylyProvider({ children }: { children: React.ReactNode }) {
         const taskId = `task-study-${Date.now()}-${i}`;
 
         const topicName =
-          exam.topics[i - 1]?.name || `Study Session ${i}: Review key concepts`;
+          exam.topics[i - 1]?.name || `Sesión de estudio ${i}: Repaso de conceptos clave`;
 
         const studyTask: Task = {
           id: taskId,
           title: `[${exam.subject}] ${topicName}`,
-          description: `Targeted study session #${i} for upcoming exam on ${exam.examDate}.`,
+          description: `Bloque de estudio programado #${i} para el examen del ${exam.examDate}.`,
           dueDate: taskDate,
           scheduledTime: '10:00',
           timeSlot: i % 2 === 0 ? 'afternoon' : 'morning',
           priority: 'high',
-          category: 'Academic',
+          category: 'Académico',
           status: 'pending',
           examId: exam.id,
           createdAt: new Date().toISOString(),
@@ -370,7 +359,7 @@ export function DaylyProvider({ children }: { children: React.ReactNode }) {
     [exams, triggerCelebration]
   );
 
-  // --- Project Methods ---
+  // --- Proyectos ---
   const addProject = useCallback(
     (projectData: Omit<Project, 'id' | 'createdAt'>): Project => {
       const newProj: Project = {
@@ -392,7 +381,6 @@ export function DaylyProvider({ children }: { children: React.ReactNode }) {
 
   const deleteProject = useCallback((id: string) => {
     setProjects((prev) => prev.filter((p) => p.id !== id));
-    // Decouple associated tasks
     setTasks((prev) =>
       prev.map((t) => (t.projectId === id ? { ...t, projectId: undefined } : t))
     );
@@ -421,7 +409,7 @@ export function DaylyProvider({ children }: { children: React.ReactNode }) {
     [triggerCelebration]
   );
 
-  // --- Habit Methods ---
+  // --- Hábitos ---
   const addHabit = useCallback(
     (habitData: Omit<Habit, 'id' | 'createdAt' | 'history'>): Habit => {
       const newHabit: Habit = {
@@ -463,7 +451,7 @@ export function DaylyProvider({ children }: { children: React.ReactNode }) {
     [triggerCelebration]
   );
 
-  // --- Goal Methods ---
+  // --- Objetivos ---
   const addGoal = useCallback((goalData: Omit<Goal, 'id' | 'createdAt'>): Goal => {
     const newGoal: Goal = {
       ...goalData,
@@ -502,7 +490,7 @@ export function DaylyProvider({ children }: { children: React.ReactNode }) {
     [triggerCelebration]
   );
 
-  // --- Routine Methods ---
+  // --- Rutinas ---
   const addRoutine = useCallback(
     (routineData: Omit<Routine, 'id' | 'createdAt' | 'completions'>): Routine => {
       const newRoutine: Routine = {
@@ -557,7 +545,7 @@ export function DaylyProvider({ children }: { children: React.ReactNode }) {
     [triggerCelebration]
   );
 
-  // --- Reflection Methods ---
+  // --- Reflexión ---
   const saveDailyReflection = useCallback((reflection: DailyReflection) => {
     setReflections((prev) => ({
       ...prev,
@@ -565,7 +553,7 @@ export function DaylyProvider({ children }: { children: React.ReactNode }) {
     }));
   }, []);
 
-  // --- Note Methods ---
+  // --- Notas ---
   const addNote = useCallback(
     (noteData: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>): Note => {
       const now = new Date().toISOString();
@@ -595,7 +583,7 @@ export function DaylyProvider({ children }: { children: React.ReactNode }) {
     setNotes((prev) => prev.filter((n) => n.id !== id));
   }, []);
 
-  // --- Settings & Storage ---
+  // --- Configuración y Almacenamiento ---
   const updateSettings = useCallback((updates: Partial<UserSettings>) => {
     setSettings((prev) => ({ ...prev, ...updates }));
   }, []);
@@ -622,7 +610,7 @@ export function DaylyProvider({ children }: { children: React.ReactNode }) {
     try {
       const parsed = JSON.parse(jsonData);
       if (!parsed.tasks || !Array.isArray(parsed.tasks)) {
-        throw new Error('Invalid DAYLY backup schema.');
+        throw new Error('Formato de copia de seguridad no válido.');
       }
 
       setTasks(parsed.tasks || []);
@@ -637,13 +625,14 @@ export function DaylyProvider({ children }: { children: React.ReactNode }) {
 
       return true;
     } catch (e) {
-      console.error('Import backup failed:', e);
+      console.error('Error al importar copia de seguridad:', e);
       return false;
     }
   }, []);
 
   const resetData = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem('dayly_productivity_v1');
     const seed = getInitialSeedData();
     setTasks(seed.tasks);
     setExams(seed.exams);
@@ -721,7 +710,7 @@ export function DaylyProvider({ children }: { children: React.ReactNode }) {
 export function useDayly() {
   const context = useContext(DaylyContext);
   if (!context) {
-    throw new Error('useDayly must be used within a DaylyProvider');
+    throw new Error('useDayly debe utilizarse dentro de un DaylyProvider');
   }
   return context;
 }

@@ -6,17 +6,14 @@ import {
   Plus,
   CheckCircle2,
   Circle,
-  Clock,
   Trash2,
   Sunrise,
   Sun,
-  Sunset,
   Moon,
-  Sparkles,
 } from 'lucide-react';
 import { useDayly } from '@/context/DaylyContext';
 import { getTodayStr } from '@/utils/dateUtils';
-import { Routine, RoutineStep } from '@/types/dayly';
+import { RoutineStep } from '@/types/dayly';
 
 export function RoutinesView() {
   const {
@@ -29,11 +26,9 @@ export function RoutinesView() {
 
   const todayStr = getTodayStr();
 
-  // Inline step adder state (routineId -> { title, duration })
   const [newStepTitle, setNewStepTitle] = useState<Record<string, string>>({});
   const [newStepDuration, setNewStepDuration] = useState<Record<string, number>>({});
 
-  // Add new routine modal state
   const [isAddingRoutine, setIsAddingRoutine] = useState(false);
   const [newRoutineName, setNewRoutineName] = useState('');
   const [newRoutineSlot, setNewRoutineSlot] = useState<'morning' | 'afternoon' | 'evening' | 'anytime'>('morning');
@@ -66,7 +61,7 @@ export function RoutinesView() {
       name: newRoutineName.trim(),
       timeSlot: newRoutineSlot,
       steps: [
-        { id: `rs-${Date.now()}-1`, title: 'First step of this routine', durationMinutes: 5 },
+        { id: `rs-${Date.now()}-1`, title: 'Primer paso de esta rutina', durationMinutes: 5 },
       ],
     });
 
@@ -87,9 +82,22 @@ export function RoutinesView() {
     }
   };
 
+  const translateSlot = (slot: string) => {
+    switch (slot) {
+      case 'morning':
+        return 'Mañana';
+      case 'afternoon':
+        return 'Tarde';
+      case 'evening':
+        return 'Noche';
+      default:
+        return 'En cualquier momento';
+    }
+  };
+
   return (
     <div className="space-y-6 sm:space-y-8 animate-fade-in pb-16">
-      {/* Header */}
+      {/* Cabecera */}
       <div className="bg-white p-5 rounded-2xl border border-[#F0EBEF] shadow-2xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2">
@@ -98,10 +106,10 @@ export function RoutinesView() {
             </div>
             <div>
               <h2 className="text-xl font-bold tracking-tight text-[#29252B]">
-                Daily Routines & Rituals
+                Rutinas y Rituales Diarios
               </h2>
               <p className="text-xs text-[#928A91]">
-                Anchor your day with frictionless morning, study, work, and evening sequences.
+                Estructura tu jornada con secuencias fluidas de mañana, estudio, trabajo y descanso.
               </p>
             </div>
           </div>
@@ -112,11 +120,11 @@ export function RoutinesView() {
           className="flex items-center space-x-2 bg-[#FBEFF4] hover:bg-[#F7EAF0] text-[#29252B] border border-[#E5A6C0] px-4 py-2 rounded-xl text-xs font-semibold self-start sm:self-auto transition-all"
         >
           <Plus size={15} className="text-[#D68EAD]" />
-          <span>New Routine</span>
+          <span>Nueva Rutina</span>
         </button>
       </div>
 
-      {/* Routines Grid */}
+      {/* Cuadrícula de Rutinas */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         {routines.map((routine) => {
           const completedSteps = routine.completions[todayStr] || [];
@@ -130,7 +138,7 @@ export function RoutinesView() {
               key={routine.id}
               className="bg-white rounded-2xl border border-[#F0EBEF] shadow-2xs hover:shadow-xs p-5 sm:p-6 transition-all space-y-4"
             >
-              {/* Routine Card Header */}
+              {/* Cabecera de la tarjeta */}
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center space-x-3">
                   <div className="w-9 h-9 rounded-xl bg-[#FCFAFB] border border-[#F0EBEF] flex items-center justify-center">
@@ -141,9 +149,9 @@ export function RoutinesView() {
                       {routine.name}
                     </h3>
                     <div className="flex items-center space-x-2 text-[10px] text-[#928A91] mt-0.5">
-                      <span className="capitalize">{routine.timeSlot}</span>
+                      <span>{translateSlot(routine.timeSlot)}</span>
                       {totalMinutes > 0 && (
-                        <span>&middot; ~{totalMinutes} min total</span>
+                        <span>&middot; ~{totalMinutes} min en total</span>
                       )}
                     </div>
                   </div>
@@ -152,18 +160,18 @@ export function RoutinesView() {
                 <button
                   onClick={() => deleteRoutine(routine.id)}
                   className="p-1.5 text-[#928A91] hover:text-[#DF7682] transition-colors"
-                  title="Delete routine"
+                  title="Eliminar rutina"
                 >
                   <Trash2 size={15} />
                 </button>
               </div>
 
-              {/* Progress */}
+              {/* Progreso */}
               <div>
                 <div className="flex items-center justify-between text-xs text-[#928A91] mb-1.5">
-                  <span className="font-medium text-[#29252B]">Today&apos;s Progress</span>
+                  <span className="font-medium text-[#29252B]">Progreso de Hoy</span>
                   <span className="font-semibold text-[#D68EAD]">
-                    {completedCount}/{totalSteps} steps completed ({percent}%)
+                    {completedCount}/{totalSteps} pasos completados ({percent}%)
                   </span>
                 </div>
                 <div className="w-full h-2 rounded-full bg-[#FCFAFB] border border-[#F0EBEF] overflow-hidden">
@@ -174,7 +182,7 @@ export function RoutinesView() {
                 </div>
               </div>
 
-              {/* Steps Checklist */}
+              {/* Pasos */}
               <div className="space-y-2 pt-2 border-t border-[#F0EBEF]">
                 <div className="space-y-1.5">
                   {routine.steps.map((step, idx) => {
@@ -221,11 +229,11 @@ export function RoutinesView() {
                   })}
                 </div>
 
-                {/* Add Step inline */}
+                {/* Añadir Paso inline */}
                 <div className="flex items-center space-x-2 pt-1">
                   <input
                     type="text"
-                    placeholder="Add step to routine..."
+                    placeholder="Añadir paso a la rutina..."
                     value={newStepTitle[routine.id] || ''}
                     onChange={(e) =>
                       setNewStepTitle((prev) => ({
@@ -256,7 +264,7 @@ export function RoutinesView() {
                     onClick={() => handleAddStep(routine.id)}
                     className="px-2.5 py-1.5 bg-[#FBEFF4] hover:bg-[#F7EAF0] text-[#29252B] border border-[#F0EBEF] rounded-xl text-xs font-medium"
                   >
-                    Add
+                    Añadir
                   </button>
                 </div>
               </div>
@@ -265,7 +273,7 @@ export function RoutinesView() {
         })}
       </div>
 
-      {/* ADD ROUTINE MODAL */}
+      {/* MODAL CREAR RUTINA */}
       {isAddingRoutine && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
@@ -273,16 +281,16 @@ export function RoutinesView() {
             onClick={() => setIsAddingRoutine(false)}
           />
           <div className="relative w-full max-w-md bg-white rounded-2xl shadow-xl border border-[#F0EBEF] p-6 z-10 space-y-4">
-            <h3 className="text-base font-semibold text-[#29252B]">Create Routine</h3>
+            <h3 className="text-base font-semibold text-[#29252B]">Crear Rutina</h3>
             <form onSubmit={handleCreateRoutine} className="space-y-4">
               <div>
                 <label className="block text-xs font-medium text-[#29252B] mb-1">
-                  Routine Name *
+                  Nombre de la Rutina *
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Deep Work Startup Ritual..."
+                  placeholder="ej. Rutina de Inicio de Trabajo Profundo..."
                   value={newRoutineName}
                   onChange={(e) => setNewRoutineName(e.target.value)}
                   className="w-full px-3 py-2 text-xs rounded-xl border border-[#F0EBEF]"
@@ -291,17 +299,17 @@ export function RoutinesView() {
 
               <div>
                 <label className="block text-xs font-medium text-[#29252B] mb-1">
-                  Time Slot
+                  Franja Horaria
                 </label>
                 <select
                   value={newRoutineSlot}
                   onChange={(e) => setNewRoutineSlot(e.target.value as any)}
                   className="w-full px-2.5 py-2 text-xs rounded-xl border border-[#F0EBEF]"
                 >
-                  <option value="morning">Morning</option>
-                  <option value="afternoon">Afternoon</option>
-                  <option value="evening">Evening</option>
-                  <option value="anytime">Anytime</option>
+                  <option value="morning">Mañana</option>
+                  <option value="afternoon">Tarde</option>
+                  <option value="evening">Noche</option>
+                  <option value="anytime">En cualquier momento</option>
                 </select>
               </div>
 
@@ -311,13 +319,13 @@ export function RoutinesView() {
                   onClick={() => setIsAddingRoutine(false)}
                   className="px-3 py-1.5 text-xs text-[#928A91]"
                 >
-                  Cancel
+                  Cancelar
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 text-xs font-semibold bg-[#FBEFF4] border border-[#E5A6C0] text-[#29252B] rounded-xl"
                 >
-                  Create Routine
+                  Crear Rutina
                 </button>
               </div>
             </form>

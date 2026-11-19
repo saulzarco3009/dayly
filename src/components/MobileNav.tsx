@@ -41,33 +41,33 @@ export function MobileNav() {
   };
 
   const ALL_NAV_ITEMS = [
-    { id: 'overview' as NavTab, label: 'Overview', icon: LayoutDashboard },
-    { id: 'month' as NavTab, label: 'My Month', icon: Calendar },
-    { id: 'week' as NavTab, label: 'My Week', icon: CalendarDays },
+    { id: 'overview' as NavTab, label: 'Vista General', icon: LayoutDashboard },
+    { id: 'month' as NavTab, label: 'Mi Mes', icon: Calendar },
+    { id: 'week' as NavTab, label: 'Mi Semana', icon: CalendarDays },
     {
       id: 'today' as NavTab,
-      label: 'Today',
+      label: 'Hoy',
       icon: SunMedium,
       badge: todayPendingCount > 0 ? todayPendingCount : undefined,
     },
-    { id: 'tasks' as NavTab, label: 'Tasks', icon: CheckSquare },
+    { id: 'tasks' as NavTab, label: 'Tareas', icon: CheckSquare },
     {
       id: 'exams' as NavTab,
-      label: 'Exams & Study',
+      label: 'Exámenes y Estudio',
       icon: GraduationCap,
       badge: upcomingExamsCount > 0 ? upcomingExamsCount : undefined,
     },
-    { id: 'projects' as NavTab, label: 'Projects', icon: FolderKanban },
-    { id: 'habits' as NavTab, label: 'Habits', icon: Sparkles },
-    { id: 'goals' as NavTab, label: 'Goals', icon: Flag },
-    { id: 'routines' as NavTab, label: 'Routines', icon: Repeat },
-    { id: 'notes' as NavTab, label: 'Notes', icon: FileText },
-    { id: 'settings' as NavTab, label: 'Settings & Data', icon: Settings2 },
+    { id: 'projects' as NavTab, label: 'Proyectos', icon: FolderKanban },
+    { id: 'habits' as NavTab, label: 'Hábitos', icon: Sparkles },
+    { id: 'goals' as NavTab, label: 'Objetivos', icon: Flag },
+    { id: 'routines' as NavTab, label: 'Rutinas', icon: Repeat },
+    { id: 'notes' as NavTab, label: 'Notas', icon: FileText },
+    { id: 'settings' as NavTab, label: 'Configuración y Datos', icon: Settings2 },
   ];
 
   return (
     <>
-      {/* Mobile Bottom Navigation Bar */}
+      {/* Barra de Navegación Inferior en Móvil */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#F0EBEF] px-4 py-2 pb-safe shadow-sm">
         <div className="flex items-center justify-around max-w-md mx-auto">
           <button
@@ -79,7 +79,7 @@ export function MobileNav() {
             }`}
           >
             <LayoutDashboard size={18} />
-            <span className="mt-1">Overview</span>
+            <span className="mt-1">Inicio</span>
           </button>
 
           <button
@@ -91,17 +91,17 @@ export function MobileNav() {
             }`}
           >
             <SunMedium size={18} />
-            <span className="mt-1">Today</span>
+            <span className="mt-1">Hoy</span>
             {todayPendingCount > 0 && (
               <span className="absolute top-0 right-2 w-2 h-2 rounded-full bg-[#E5A6C0]" />
             )}
           </button>
 
-          {/* Center Quick Add Button */}
+          {/* Botón Central de Creación Rápida */}
           <button
             onClick={() => openQuickAdd('task')}
             className="w-10 h-10 rounded-full bg-[#FBEFF4] border border-[#E5A6C0] text-[#D68EAD] flex items-center justify-center -mt-3 shadow-md hover:bg-[#F7EAF0] active:scale-95 transition-all"
-            aria-label="Quick Add Activity"
+            aria-label="Crear Actividad"
           >
             <Plus size={20} />
           </button>
@@ -115,7 +115,7 @@ export function MobileNav() {
             }`}
           >
             <Calendar size={18} />
-            <span className="mt-1">Month</span>
+            <span className="mt-1">Mes</span>
           </button>
 
           <button
@@ -125,27 +125,25 @@ export function MobileNav() {
             }`}
           >
             <Menu size={18} />
-            <span className="mt-1">Menu</span>
+            <span className="mt-1">Menú</span>
           </button>
         </div>
       </div>
 
-      {/* Full Menu Slide-up / Drawer on Mobile */}
+      {/* Menú Desplegable Completo en Móvil */}
       {menuOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex flex-col justify-end">
-          {/* Backdrop */}
           <div
             className="fixed inset-0 bg-black/20 backdrop-blur-xs transition-opacity animate-fade-in"
             onClick={() => setMenuOpen(false)}
           />
 
-          {/* Drawer content */}
           <div className="relative bg-white rounded-t-3xl max-h-[85vh] overflow-y-auto px-6 pt-5 pb-8 shadow-2xl border-t border-[#F0EBEF] z-10 animate-fade-in">
             <div className="flex items-center justify-between pb-4 border-b border-[#F0EBEF]">
               <div className="flex items-center space-x-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#E5A6C0]" />
                 <span className="text-base font-semibold text-[#29252B]">
-                  DAYLY Menu
+                  Menú DAYLY
                 </span>
               </div>
               <button
@@ -183,7 +181,7 @@ export function MobileNav() {
                       <div className="truncate">{item.label}</div>
                       {item.badge !== undefined && (
                         <span className="text-[10px] text-[#D68EAD] font-semibold">
-                          {item.badge} pending
+                          {item.badge} pendientes
                         </span>
                       )}
                     </div>
@@ -194,7 +192,7 @@ export function MobileNav() {
 
             <div className="mt-6 pt-4 border-t border-[#F0EBEF] flex items-center justify-between">
               <div className="text-xs text-[#928A91]">
-                Signed in as <span className="font-semibold text-[#29252B]">{settings.userName}</span>
+                Sesión de <span className="font-semibold text-[#29252B]">{settings.userName}</span>
               </div>
               <button
                 onClick={() => {
@@ -203,7 +201,7 @@ export function MobileNav() {
                 }}
                 className="text-xs font-medium px-3 py-1.5 rounded-xl bg-[#FBEFF4] text-[#D68EAD] border border-[#E5A6C0]/50"
               >
-                + Quick Add
+                + Añadir Rápido
               </button>
             </div>
           </div>

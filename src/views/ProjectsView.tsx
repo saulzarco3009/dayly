@@ -4,20 +4,17 @@ import React, { useState } from 'react';
 import {
   FolderKanban,
   Plus,
-  Calendar,
-  CheckCircle2,
-  Circle,
-  Clock,
   Trash2,
   ChevronDown,
   ChevronUp,
-  Tag,
   Briefcase,
   ListTodo,
+  CheckCircle2,
+  Circle,
 } from 'lucide-react';
 import { useDayly } from '@/context/DaylyContext';
-import { formatFriendlyDate, formatLongDate, getTodayStr } from '@/utils/dateUtils';
-import { Project, ProjectMilestone } from '@/types/dayly';
+import { formatFriendlyDate, getTodayStr } from '@/utils/dateUtils';
+import { ProjectMilestone } from '@/types/dayly';
 
 export function ProjectsView() {
   const {
@@ -33,9 +30,7 @@ export function ProjectsView() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [expandedProjectId, setExpandedProjectId] = useState<string | null>(null);
 
-  // New Milestone inline input state (projectId -> title)
   const [newMilestoneTitle, setNewMilestoneTitle] = useState<Record<string, string>>({});
-  // New task for project inline
   const [newProjectTaskTitle, setNewProjectTaskTitle] = useState<Record<string, string>>({});
 
   const filteredProjects = projects.filter((p) => {
@@ -71,7 +66,7 @@ export function ProjectsView() {
       title,
       dueDate: getTodayStr(),
       priority: 'medium',
-      category: 'Project',
+      category: 'Proyecto',
       status: 'pending',
       projectId,
     });
@@ -81,7 +76,7 @@ export function ProjectsView() {
 
   return (
     <div className="space-y-6 sm:space-y-8 animate-fade-in pb-16">
-      {/* Header */}
+      {/* Cabecera */}
       <div className="bg-white p-5 rounded-2xl border border-[#F0EBEF] shadow-2xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2">
@@ -90,10 +85,10 @@ export function ProjectsView() {
             </div>
             <div>
               <h2 className="text-xl font-bold tracking-tight text-[#29252B]">
-                Projects & Initiatives
+                Proyectos e Iniciativas
               </h2>
               <p className="text-xs text-[#928A91]">
-                Track high-level ventures, deliverables, milestones and linked tasks.
+                Supervisa iniciativas clave, entregables, hitos y tareas vinculadas.
               </p>
             </div>
           </div>
@@ -104,40 +99,45 @@ export function ProjectsView() {
           className="flex items-center space-x-2 bg-[#FBEFF4] hover:bg-[#F7EAF0] text-[#29252B] border border-[#E5A6C0] px-4 py-2 rounded-xl text-xs font-semibold self-start sm:self-auto transition-all"
         >
           <Plus size={15} className="text-[#D68EAD]" />
-          <span>New Project</span>
+          <span>Nuevo Proyecto</span>
         </button>
       </div>
 
-      {/* Filter Tabs */}
+      {/* Pestañas de Filtro */}
       <div className="flex items-center space-x-2">
-        {['all', 'in_progress', 'planning', 'completed'].map((tab) => (
+        {[
+          { id: 'all', label: 'Todos' },
+          { id: 'in_progress', label: 'En progreso' },
+          { id: 'planning', label: 'Planificación' },
+          { id: 'completed', label: 'Completados' },
+        ].map((tab) => (
           <button
-            key={tab}
-            onClick={() => setStatusFilter(tab)}
+            key={tab.id}
+            onClick={() => setStatusFilter(tab.id)}
             className={`px-3 py-1.5 rounded-xl text-xs font-medium capitalize transition-all ${
-              statusFilter === tab
+              statusFilter === tab.id
                 ? 'bg-[#FBEFF4] text-[#29252B] font-semibold border border-[#E5A6C0]'
                 : 'bg-white text-[#928A91] hover:text-[#29252B] border border-[#F0EBEF]'
             }`}
           >
-            {tab.replace('_', ' ')}
+            {tab.label}
           </button>
         ))}
       </div>
 
-      {/* Projects Grid */}
+      {/* Cuadrícula de Proyectos */}
       {filteredProjects.length === 0 ? (
         <div className="bg-white rounded-2xl border border-dashed border-[#F0EBEF] p-12 text-center">
           <FolderKanban size={32} className="mx-auto text-[#928A91] mb-2" />
-          <h3 className="text-sm font-semibold text-[#29252B]">No projects found</h3>
+          <h3 className="text-sm font-semibold text-[#29252B]">No hay proyectos encontrados</h3>
           <p className="text-xs text-[#928A91] mt-1 mb-4">
-            Create your first project to organize long-term initiatives.
+            Crea tu primer proyecto para organizar iniciativas a medio y largo plazo.
           </p>
           <button
             onClick={() => openQuickAdd('project')}
             className="text-xs font-semibold px-4 py-2 bg-[#FBEFF4] text-[#D68EAD] rounded-xl border border-[#E5A6C0]"
           >
-            Create Project
+            Crear Proyecto
           </button>
         </div>
       ) : (
@@ -148,8 +148,6 @@ export function ProjectsView() {
             const progress = totalM > 0 ? Math.round((completedM / totalM) * 100) : 0;
 
             const linkedTasks = tasks.filter((t) => t.projectId === project.id);
-            const completedLinked = linkedTasks.filter((t) => t.status === 'completed');
-
             const isExpanded = expandedProjectId === project.id;
 
             return (
@@ -157,7 +155,7 @@ export function ProjectsView() {
                 key={project.id}
                 className="bg-white rounded-2xl border border-[#F0EBEF] shadow-2xs hover:shadow-xs p-5 sm:p-6 transition-all space-y-4"
               >
-                {/* Project Header */}
+                {/* Cabecera del proyecto */}
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className="flex items-center space-x-2 mb-1.5">
@@ -170,10 +168,10 @@ export function ProjectsView() {
                             : 'bg-[#FCFAFB] text-[#928A91] border border-[#F0EBEF]'
                         }`}
                       >
-                        {project.status}
+                        {project.status === 'Completed' ? 'Completado' : project.status === 'In Progress' ? 'En progreso' : 'Planificación'}
                       </span>
                       <span className="text-[10px] text-[#928A91]">
-                        Due {formatFriendlyDate(project.deadline)}
+                        Límite {formatFriendlyDate(project.deadline)}
                       </span>
                     </div>
 
@@ -185,7 +183,7 @@ export function ProjectsView() {
                   <button
                     onClick={() => deleteProject(project.id)}
                     className="p-1.5 text-[#928A91] hover:text-[#DF7682] transition-colors"
-                    title="Delete Project"
+                    title="Eliminar proyecto"
                   >
                     <Trash2 size={15} />
                   </button>
@@ -195,10 +193,10 @@ export function ProjectsView() {
                   {project.description}
                 </p>
 
-                {/* Progress Bar */}
+                {/* Barra de progreso */}
                 <div>
                   <div className="flex items-center justify-between text-xs text-[#928A91] mb-1.5">
-                    <span className="font-medium text-[#29252B]">Milestone Progress</span>
+                    <span className="font-medium text-[#29252B]">Progreso de Hitos</span>
                     <span className="font-semibold text-[#78AC8E]">
                       {completedM}/{totalM} ({progress}%)
                     </span>
@@ -211,14 +209,14 @@ export function ProjectsView() {
                   </div>
                 </div>
 
-                {/* Milestones Checklist */}
+                {/* Hitos */}
                 <div className="space-y-2 pt-2 border-t border-[#F0EBEF]">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold uppercase tracking-wider text-[#928A91]">
-                      Milestones
+                      Hitos Clave
                     </span>
                     <span className="text-[10px] text-[#928A91]">
-                      {project.milestones.length} milestones
+                      {project.milestones.length} hitos
                     </span>
                   </div>
 
@@ -256,11 +254,11 @@ export function ProjectsView() {
                     ))}
                   </div>
 
-                  {/* Add Milestone */}
+                  {/* Añadir Hito */}
                   <div className="flex items-center space-x-2 pt-1">
                     <input
                       type="text"
-                      placeholder="Add milestone..."
+                      placeholder="Añadir hito..."
                       value={newMilestoneTitle[project.id] || ''}
                       onChange={(e) =>
                         setNewMilestoneTitle((prev) => ({
@@ -277,12 +275,12 @@ export function ProjectsView() {
                       onClick={() => handleAddMilestone(project.id)}
                       className="px-2.5 py-1.5 bg-[#FBEFF4] hover:bg-[#F7EAF0] text-[#29252B] border border-[#F0EBEF] rounded-xl text-xs font-medium"
                     >
-                      Add
+                      Añadir
                     </button>
                   </div>
                 </div>
 
-                {/* Collapsible Linked Tasks Section */}
+                {/* Tareas asociadas */}
                 <div className="pt-2 border-t border-[#F0EBEF]">
                   <button
                     onClick={() =>
@@ -292,7 +290,7 @@ export function ProjectsView() {
                   >
                     <div className="flex items-center space-x-1.5">
                       <ListTodo size={14} className="text-[#928A91]" />
-                      <span>Associated Tasks ({linkedTasks.length})</span>
+                      <span>Tareas Asociadas ({linkedTasks.length})</span>
                     </div>
                     {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                   </button>
@@ -301,7 +299,7 @@ export function ProjectsView() {
                     <div className="mt-3 space-y-2 animate-fade-in">
                       {linkedTasks.length === 0 ? (
                         <p className="text-xs text-[#928A91] italic py-1">
-                          No tasks linked to this project yet.
+                          No hay tareas vinculadas a este proyecto todavía.
                         </p>
                       ) : (
                         linkedTasks.map((t) => (
@@ -325,11 +323,11 @@ export function ProjectsView() {
                         ))
                       )}
 
-                      {/* Add Linked Task Inline */}
+                      {/* Añadir Tarea vinculada */}
                       <div className="flex items-center space-x-2 pt-2">
                         <input
                           type="text"
-                          placeholder="Add new task to this project..."
+                          placeholder="Añadir nueva tarea a este proyecto..."
                           value={newProjectTaskTitle[project.id] || ''}
                           onChange={(e) =>
                             setNewProjectTaskTitle((prev) => ({
@@ -346,7 +344,7 @@ export function ProjectsView() {
                           onClick={() => handleAddLinkedTask(project.id)}
                           className="px-2.5 py-1.5 bg-[#FBEFF4] hover:bg-[#F7EAF0] text-[#29252B] border border-[#F0EBEF] rounded-xl text-xs font-medium"
                         >
-                          Add
+                          Añadir
                         </button>
                       </div>
                     </div>

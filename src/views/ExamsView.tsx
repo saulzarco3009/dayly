@@ -5,16 +5,12 @@ import {
   GraduationCap,
   Plus,
   Calendar,
-  Clock,
   CheckCircle2,
   Circle,
   Split,
   Trash2,
-  Edit2,
-  Sparkles,
   BookOpen,
   X,
-  AlertTriangle,
 } from 'lucide-react';
 import { useDayly } from '@/context/DaylyContext';
 import {
@@ -31,23 +27,17 @@ export function ExamsView() {
     tasks,
     toggleExamTopic,
     deleteExam,
-    addExam,
     updateExam,
     breakExamIntoStudySessions,
     openQuickAdd,
-    setActiveTab,
   } = useDayly();
 
   const todayStr = getTodayStr();
 
-  // "Break into Study Sessions" modal state
   const [breakdownExam, setBreakdownExam] = useState<Exam | null>(null);
   const [sessionCount, setSessionCount] = useState<number>(3);
-
-  // New Topic inline input state (examId -> text)
   const [newTopicName, setNewTopicName] = useState<Record<string, string>>({});
 
-  // Sort exams chronologically
   const sortedExams = [...exams].sort((a, b) => a.examDate.localeCompare(b.examDate));
 
   const handleAddTopic = (examId: string) => {
@@ -78,7 +68,7 @@ export function ExamsView() {
 
   return (
     <div className="space-y-6 sm:space-y-8 animate-fade-in pb-16">
-      {/* Top Header Card */}
+      {/* Cabecera */}
       <div className="bg-white p-5 rounded-2xl border border-[#F0EBEF] shadow-2xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2">
@@ -87,10 +77,10 @@ export function ExamsView() {
             </div>
             <div>
               <h2 className="text-xl font-bold tracking-tight text-[#29252B]">
-                Academic & Exam Planner
+                Planificador Académico y Exámenes
               </h2>
               <p className="text-xs text-[#928A91]">
-                Track upcoming exams, master topics, and divide preparation into daily study sessions.
+                Supervisa exámenes, domina el temario y divide tu preparación en sesiones diarias de estudio.
               </p>
             </div>
           </div>
@@ -101,23 +91,23 @@ export function ExamsView() {
           className="flex items-center space-x-2 bg-[#FBEFF4] hover:bg-[#F7EAF0] text-[#29252B] border border-[#E5A6C0] px-4 py-2 rounded-xl text-xs font-semibold self-start sm:self-auto transition-all"
         >
           <Plus size={15} className="text-[#D68EAD]" />
-          <span>New Exam</span>
+          <span>Nuevo Examen</span>
         </button>
       </div>
 
-      {/* Exams Grid */}
+      {/* Cuadrícula de Exámenes */}
       {sortedExams.length === 0 ? (
         <div className="bg-white rounded-2xl border border-dashed border-[#F0EBEF] p-12 text-center">
           <GraduationCap size={32} className="mx-auto text-[#928A91] mb-2" />
-          <h3 className="text-sm font-semibold text-[#29252B]">No exams scheduled</h3>
+          <h3 className="text-sm font-semibold text-[#29252B]">No hay exámenes programados</h3>
           <p className="text-xs text-[#928A91] mt-1 mb-4">
-            Add your subjects, tests, and study milestones to stay ahead.
+            Añade asignaturas, pruebas y fechas para planificar con antelación.
           </p>
           <button
             onClick={() => openQuickAdd('exam')}
             className="text-xs font-semibold px-4 py-2 bg-[#FBEFF4] text-[#D68EAD] rounded-xl border border-[#E5A6C0]"
           >
-            Create Exam
+            Crear Examen
           </button>
         </div>
       ) : (
@@ -128,7 +118,6 @@ export function ExamsView() {
             const totalTopics = exam.topics.length;
             const progress = totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0;
 
-            // Find associated study tasks in tasks state
             const linkedTasks = tasks.filter((t) => t.examId === exam.id);
             const completedLinkedTasks = linkedTasks.filter((t) => t.status === 'completed');
 
@@ -138,7 +127,6 @@ export function ExamsView() {
                 className="bg-white rounded-2xl border border-[#F0EBEF] shadow-2xs hover:shadow-xs p-5 sm:p-6 transition-all flex flex-col justify-between space-y-5"
               >
                 <div>
-                  {/* Exam Card Top: Countdown & Badges */}
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <div className="flex items-center space-x-2 mb-1">
@@ -151,11 +139,11 @@ export function ExamsView() {
                               : 'bg-[#FCFAFB] text-[#78AC8E] border border-[#F0EBEF]'
                           }`}
                         >
-                          {exam.difficulty}
+                          {exam.difficulty === 'Hard' ? 'Difícil' : exam.difficulty === 'Medium' ? 'Media' : 'Fácil'}
                         </span>
 
                         <span className="text-[10px] text-[#928A91] bg-[#FCFAFB] px-2 py-0.5 rounded-full border border-[#F0EBEF]">
-                          {exam.status}
+                          {exam.status === 'Completed' ? 'Completado' : exam.status === 'In Progress' ? 'En preparación' : 'Próximo'}
                         </span>
                       </div>
 
@@ -165,11 +153,11 @@ export function ExamsView() {
                       <p className="text-xs text-[#928A91] flex items-center mt-0.5">
                         <Calendar size={12} className="mr-1" />
                         {formatLongDate(exam.examDate)}
-                        {exam.examTime && ` at ${exam.examTime}`}
+                        {exam.examTime && ` a las ${exam.examTime}`}
                       </p>
                     </div>
 
-                    {/* Countdown Pill */}
+                    {/* Cuenta atrás */}
                     <div className="text-right shrink-0">
                       <div
                         className={`px-3 py-1.5 rounded-xl font-bold text-xs tracking-tight ${
@@ -181,12 +169,12 @@ export function ExamsView() {
                         }`}
                       >
                         {daysLeft < 0
-                          ? 'Completed'
+                          ? 'Completado'
                           : daysLeft === 0
-                          ? 'Today!'
+                          ? '¡Hoy!'
                           : daysLeft === 1
-                          ? 'Tomorrow'
-                          : `${daysLeft} days left`}
+                          ? 'Mañana'
+                          : `${daysLeft} días restantes`}
                       </div>
                     </div>
                   </div>
@@ -197,12 +185,12 @@ export function ExamsView() {
                     </p>
                   )}
 
-                  {/* Progress Bar */}
+                  {/* Barra de progreso */}
                   <div className="mt-4">
                     <div className="flex items-center justify-between text-xs text-[#928A91] mb-1.5">
-                      <span className="font-medium text-[#29252B]">Preparation Progress</span>
+                      <span className="font-medium text-[#29252B]">Progreso de Preparación</span>
                       <span className="font-semibold text-[#D68EAD]">
-                        {completedTopics}/{totalTopics} topics ({progress}%)
+                        {completedTopics}/{totalTopics} temas ({progress}%)
                       </span>
                     </div>
                     <div className="w-full h-2 rounded-full bg-[#FCFAFB] border border-[#F0EBEF] overflow-hidden">
@@ -213,14 +201,14 @@ export function ExamsView() {
                     </div>
                   </div>
 
-                  {/* Topics Checklist */}
+                  {/* Temario */}
                   <div className="mt-5 space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-semibold uppercase tracking-wider text-[#928A91]">
-                        Syllabus & Topics
+                        Temario y Temas
                       </span>
                       <span className="text-[10px] text-[#928A91]">
-                        Click to check off
+                        Haz clic para marcar como dominado
                       </span>
                     </div>
 
@@ -258,11 +246,11 @@ export function ExamsView() {
                       ))}
                     </div>
 
-                    {/* Inline Add Topic */}
+                    {/* Añadir tema inline */}
                     <div className="flex items-center space-x-2 pt-1">
                       <input
                         type="text"
-                        placeholder="Add another topic..."
+                        placeholder="Añadir otro tema..."
                         value={newTopicName[exam.id] || ''}
                         onChange={(e) =>
                           setNewTopicName((prev) => ({
@@ -279,30 +267,29 @@ export function ExamsView() {
                         onClick={() => handleAddTopic(exam.id)}
                         className="px-2.5 py-1.5 bg-[#FBEFF4] hover:bg-[#F7EAF0] text-[#29252B] border border-[#F0EBEF] rounded-xl text-xs font-medium"
                       >
-                        Add
+                        Añadir
                       </button>
                     </div>
                   </div>
 
-                  {/* Generated Study Sessions Info */}
+                  {/* Bloques de estudio generados */}
                   {linkedTasks.length > 0 && (
                     <div className="mt-4 p-3 bg-[#FCFAFB] rounded-xl border border-[#F0EBEF]">
                       <div className="flex items-center justify-between text-xs">
                         <span className="font-medium text-[#29252B] flex items-center">
                           <BookOpen size={13} className="mr-1.5 text-[#D68EAD]" />
-                          Study Tasks in Calendar:
+                          Sesiones en Calendario:
                         </span>
                         <span className="text-[#928A91]">
-                          {completedLinkedTasks.length}/{linkedTasks.length} sessions done
+                          {completedLinkedTasks.length}/{linkedTasks.length} sesiones completadas
                         </span>
                       </div>
                     </div>
                   )}
                 </div>
 
-                {/* Bottom Actions Bar */}
+                {/* Acciones inferiores */}
                 <div className="pt-3 border-t border-[#F0EBEF] flex items-center justify-between">
-                  {/* Break into study tasks button */}
                   <button
                     onClick={() => {
                       setBreakdownExam(exam);
@@ -311,13 +298,13 @@ export function ExamsView() {
                     className="flex items-center space-x-1.5 text-xs font-semibold text-[#D68EAD] hover:text-[#29252B] bg-[#FBEFF4] hover:bg-[#F7EAF0] px-3 py-1.5 rounded-xl border border-[#E5A6C0]/40 transition-colors"
                   >
                     <Split size={14} />
-                    <span>Break into Study Sessions</span>
+                    <span>Dividir en Sesiones de Estudio</span>
                   </button>
 
                   <button
                     onClick={() => deleteExam(exam.id)}
                     className="p-1.5 text-[#928A91] hover:text-[#DF7682] transition-colors"
-                    title="Delete Exam"
+                    title="Eliminar examen"
                   >
                     <Trash2 size={15} />
                   </button>
@@ -328,7 +315,7 @@ export function ExamsView() {
         </div>
       )}
 
-      {/* BREAK INTO STUDY SESSIONS MODAL */}
+      {/* MODAL DIVISIÓN EN SESIONES DE ESTUDIO */}
       {breakdownExam && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
@@ -340,7 +327,7 @@ export function ExamsView() {
               <div className="flex items-center space-x-2">
                 <Split size={16} className="text-[#D68EAD]" />
                 <h3 className="text-base font-semibold text-[#29252B]">
-                  Divide into Study Sessions
+                  Dividir en Sesiones de Estudio
                 </h3>
               </div>
               <button
@@ -352,15 +339,15 @@ export function ExamsView() {
             </div>
 
             <p className="text-xs text-[#928A91] leading-relaxed">
-              DAYLY will automatically generate and distribute study blocks across the days before{' '}
-              <strong className="text-[#29252B]">{breakdownExam.subject}</strong> on{' '}
-              {formatFriendlyDate(breakdownExam.examDate)}. These study tasks will appear on your
-              dashboard, weekly planner, and monthly calendar.
+              DAYLY creará y distribuirá automáticamente sesiones de estudio en los días previos a{' '}
+              <strong className="text-[#29252B]">{breakdownExam.subject}</strong> (examen el{' '}
+              {formatFriendlyDate(breakdownExam.examDate)}). Estas tareas de estudio aparecerán en tu
+              panel principal, planificador semanal y calendario mensual.
             </p>
 
             <div>
               <label className="block text-xs font-semibold text-[#29252B] mb-2">
-                How many study sessions would you like?
+                ¿Cuántas sesiones de estudio deseas programar?
               </label>
               <div className="flex items-center space-x-2">
                 {[2, 3, 4, 5, 7].map((num) => (
@@ -374,14 +361,14 @@ export function ExamsView() {
                         : 'bg-[#FCFAFB] border-[#F0EBEF] text-[#928A91] hover:text-[#29252B]'
                     }`}
                   >
-                    {num} sessions
+                    {num} sesiones
                   </button>
                 ))}
               </div>
             </div>
 
             <div className="p-3 bg-[#FCFAFB] rounded-xl border border-[#F0EBEF] text-xs text-[#928A91]">
-              Each session will be mapped to exam topics and spaced evenly until exam day.
+              Cada sesión se asociará a los temas del examen y se distribuirá equitativamente.
             </div>
 
             <div className="flex items-center justify-end space-x-2 pt-3 border-t border-[#F0EBEF]">
@@ -390,14 +377,14 @@ export function ExamsView() {
                 onClick={() => setBreakdownExam(null)}
                 className="px-3 py-1.5 text-xs text-[#928A91]"
               >
-                Cancel
+                Cancelar
               </button>
               <button
                 type="button"
                 onClick={handleExecuteBreakdown}
                 className="px-4 py-2 text-xs font-semibold bg-[#FBEFF4] hover:bg-[#F7EAF0] text-[#29252B] border border-[#E5A6C0] rounded-xl shadow-2xs transition-all active:scale-98"
               >
-                Generate Study Tasks ✨
+                Generar Tareas de Estudio ✨
               </button>
             </div>
           </div>

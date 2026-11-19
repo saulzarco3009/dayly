@@ -7,22 +7,17 @@ import {
   Plus,
   CheckCircle2,
   Circle,
-  Clock,
   GraduationCap,
   ArrowRight,
   ArrowLeft,
-  MoreVertical,
-  Calendar,
 } from 'lucide-react';
 import { useDayly } from '@/context/DaylyContext';
 import {
   getWeekDays,
-  formatFriendlyDate,
   parseISODate,
   getTodayStr,
   addDays,
 } from '@/utils/dateUtils';
-import { Priority } from '@/types/dayly';
 
 export function WeekView() {
   const {
@@ -67,13 +62,13 @@ export function WeekView() {
     setActiveInputDay(null);
   };
 
-  // Range text: e.g. "Nov 16 – Nov 22, 2026"
+  // Texto del rango semanal
   const startDay = parseISODate(weekDays[0]);
   const endDay = parseISODate(weekDays[6]);
-  const rangeStr = `${startDay.toLocaleDateString('en-US', {
+  const rangeStr = `${startDay.toLocaleDateString('es-ES', {
     month: 'short',
     day: 'numeric',
-  })} – ${endDay.toLocaleDateString('en-US', {
+  })} – ${endDay.toLocaleDateString('es-ES', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
@@ -81,13 +76,13 @@ export function WeekView() {
 
   return (
     <div className="space-y-6 animate-fade-in pb-16">
-      {/* Week Header & Navigation */}
+      {/* Encabezado y Navegación de la Semana */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-4 sm:p-5 rounded-2xl border border-[#F0EBEF] shadow-2xs">
         <div>
           <span className="text-[11px] font-semibold uppercase tracking-wider text-[#D68EAD]">
-            Weekly Planner
+            Planificador Semanal
           </span>
-          <h2 className="text-lg sm:text-xl font-bold tracking-tight text-[#29252B]">
+          <h2 className="text-lg sm:text-xl font-bold tracking-tight text-[#29252B] capitalize">
             {rangeStr}
           </h2>
         </div>
@@ -97,21 +92,21 @@ export function WeekView() {
             onClick={resetToCurrentWeek}
             className="text-xs font-semibold text-[#D68EAD] bg-[#FBEFF4] hover:bg-[#F7EAF0] px-3 py-1.5 rounded-xl border border-[#F0EBEF] transition-colors"
           >
-            This Week
+            Esta Semana
           </button>
 
           <div className="flex items-center space-x-1 border border-[#F0EBEF] rounded-xl p-0.5 bg-[#FCFAFB]">
             <button
               onClick={prevWeek}
               className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white text-[#928A91] hover:text-[#29252B] transition-colors"
-              title="Previous week"
+              title="Semana anterior"
             >
               <ChevronLeft size={16} />
             </button>
             <button
               onClick={nextWeek}
               className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white text-[#928A91] hover:text-[#29252B] transition-colors"
-              title="Next week"
+              title="Semana siguiente"
             >
               <ChevronRight size={16} />
             </button>
@@ -119,11 +114,11 @@ export function WeekView() {
         </div>
       </div>
 
-      {/* 7 Columns / Cards Grid */}
+      {/* Cuadrícula de 7 Días */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-7 gap-4 items-start">
         {weekDays.map((dateStr) => {
           const dayDate = parseISODate(dateStr);
-          const dayName = dayDate.toLocaleDateString('en-US', {
+          const dayName = dayDate.toLocaleDateString('es-ES', {
             weekday: 'short',
           });
           const dayNumber = dayDate.getDate();
@@ -142,7 +137,7 @@ export function WeekView() {
                   : 'bg-white border-[#F0EBEF] hover:border-[#E5A6C0]/40'
               }`}
             >
-              {/* Day Header */}
+              {/* Encabezado del día */}
               <div
                 onClick={() => {
                   setSelectedDate(dateStr);
@@ -166,13 +161,13 @@ export function WeekView() {
                     </span>
                     {isToday && (
                       <span className="text-[9px] font-bold uppercase bg-[#E5A6C0] text-white px-1.5 py-0.2 rounded">
-                        Today
+                        Hoy
                       </span>
                     )}
                   </div>
                 </div>
 
-                {/* Workload Pill */}
+                {/* Contador de carga */}
                 <div className="text-right">
                   <span className="text-[10px] font-semibold text-[#928A91] bg-white px-2 py-0.5 rounded-full border border-[#F0EBEF]">
                     {completedCount}/{dayTasks.length}
@@ -180,9 +175,9 @@ export function WeekView() {
                 </div>
               </div>
 
-              {/* Day Body */}
+              {/* Contenido del día */}
               <div className="p-3 space-y-2 flex-1 min-h-[160px]">
-                {/* Exams if any */}
+                {/* Exámenes si los hay */}
                 {dayExams.map((exam) => (
                   <div
                     key={exam.id}
@@ -193,10 +188,10 @@ export function WeekView() {
                   </div>
                 ))}
 
-                {/* Tasks List */}
+                {/* Lista de tareas */}
                 {dayTasks.length === 0 && dayExams.length === 0 ? (
                   <div className="py-6 text-center text-[11px] text-[#928A91] italic">
-                    No tasks
+                    Sin tareas
                   </div>
                 ) : (
                   dayTasks.map((task) => {
@@ -247,17 +242,17 @@ export function WeekView() {
                                     : 'text-[#928A91]'
                                 }`}
                               >
-                                {task.priority}
+                                {task.priority === 'high' ? 'Alta' : task.priority === 'medium' ? 'Media' : 'Baja'}
                               </span>
 
-                              {/* Quick Move Day Controls */}
+                              {/* Mover tarea de día */}
                               <div className="opacity-0 group-hover:opacity-100 flex items-center space-x-1 transition-opacity">
                                 <button
                                   onClick={() =>
                                     moveTaskDay(task.id, addDays(dateStr, -1))
                                   }
                                   className="hover:text-[#D68EAD] p-0.5"
-                                  title="Move to yesterday"
+                                  title="Mover a ayer"
                                 >
                                   <ArrowLeft size={11} />
                                 </button>
@@ -266,7 +261,7 @@ export function WeekView() {
                                     moveTaskDay(task.id, addDays(dateStr, 1))
                                   }
                                   className="hover:text-[#D68EAD] p-0.5"
-                                  title="Move to tomorrow"
+                                  title="Mover a mañana"
                                 >
                                   <ArrowRight size={11} />
                                 </button>
@@ -279,13 +274,13 @@ export function WeekView() {
                   })
                 )}
 
-                {/* Inline Add Task for this Day */}
+                {/* Añadir tarea rápida para el día */}
                 {activeInputDay === dateStr ? (
                   <div className="pt-2">
                     <input
                       type="text"
                       autoFocus
-                      placeholder="Task title..."
+                      placeholder="Título de la tarea..."
                       value={inputTitle}
                       onChange={(e) => setInputTitle(e.target.value)}
                       onKeyDown={(e) => {
@@ -299,13 +294,13 @@ export function WeekView() {
                         onClick={() => setActiveInputDay(null)}
                         className="text-[#928A91] hover:text-[#29252B]"
                       >
-                        Cancel
+                        Cancelar
                       </button>
                       <button
                         onClick={() => handleQuickAddForDay(dateStr)}
                         className="font-semibold text-[#D68EAD] bg-[#FBEFF4] px-2 py-0.5 rounded border border-[#E5A6C0]/50"
                       >
-                        Add
+                        Añadir
                       </button>
                     </div>
                   </div>
@@ -318,7 +313,7 @@ export function WeekView() {
                     className="w-full py-1.5 text-[11px] font-medium text-[#928A91] hover:text-[#D68EAD] hover:bg-[#FCFAFB] rounded-lg border border-dashed border-[#F0EBEF] flex items-center justify-center space-x-1 transition-all mt-2"
                   >
                     <Plus size={12} />
-                    <span>Add Task</span>
+                    <span>Añadir Tarea</span>
                   </button>
                 )}
               </div>

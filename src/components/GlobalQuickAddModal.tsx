@@ -11,19 +11,18 @@ import {
   FileText,
   Clock,
   Calendar,
-  AlertCircle,
 } from 'lucide-react';
 import { useDayly, QuickAddType } from '@/context/DaylyContext';
 import { getTodayStr, addDays } from '@/utils/dateUtils';
 import { Priority, TimeSlot } from '@/types/dayly';
 
 const QUICK_ADD_TABS: { id: QuickAddType; label: string; icon: React.ComponentType<{ size?: number; className?: string }> }[] = [
-  { id: 'task', label: 'Task', icon: CheckSquare },
-  { id: 'exam', label: 'Exam', icon: GraduationCap },
-  { id: 'project', label: 'Project', icon: FolderKanban },
-  { id: 'habit', label: 'Habit', icon: Sparkles },
-  { id: 'goal', label: 'Goal', icon: Flag },
-  { id: 'note', label: 'Note', icon: FileText },
+  { id: 'task', label: 'Tarea', icon: CheckSquare },
+  { id: 'exam', label: 'Examen', icon: GraduationCap },
+  { id: 'project', label: 'Proyecto', icon: FolderKanban },
+  { id: 'habit', label: 'Hábito', icon: Sparkles },
+  { id: 'goal', label: 'Objetivo', icon: Flag },
+  { id: 'note', label: 'Nota', icon: FileText },
 ];
 
 export function GlobalQuickAddModal() {
@@ -43,7 +42,7 @@ export function GlobalQuickAddModal() {
 
   const [activeTab, setActiveTab] = useState<QuickAddType>('task');
 
-  // Task form state
+  // Estado formulario tarea
   const [taskTitle, setTaskTitle] = useState('');
   const [taskDueDate, setTaskDueDate] = useState(getTodayStr());
   const [taskTime, setTaskTime] = useState('');
@@ -54,43 +53,41 @@ export function GlobalQuickAddModal() {
   const [taskProjectId, setTaskProjectId] = useState('');
   const [taskExamId, setTaskExamId] = useState('');
 
-  // Exam form state
+  // Estado formulario examen
   const [examSubject, setExamSubject] = useState('');
   const [examDate, setExamDate] = useState(addDays(getTodayStr(), 7));
   const [examDifficulty, setExamDifficulty] = useState<'Easy' | 'Medium' | 'Hard'>('Medium');
   const [examTopicsInput, setExamTopicsInput] = useState('');
   const [examNotes, setExamNotes] = useState('');
 
-  // Project form state
+  // Estado formulario proyecto
   const [projectName, setProjectName] = useState('');
   const [projectDesc, setProjectDesc] = useState('');
   const [projectDeadline, setProjectDeadline] = useState(addDays(getTodayStr(), 14));
   const [projectNotes, setProjectNotes] = useState('');
 
-  // Habit form state
+  // Estado formulario hábito
   const [habitName, setHabitName] = useState('');
-  const [habitCategory, setHabitCategory] = useState('Health');
+  const [habitCategory, setHabitCategory] = useState('Salud');
   const [habitFrequency, setHabitFrequency] = useState<'daily' | 'weekdays' | 'weekends'>('daily');
 
-  // Goal form state
+  // Estado formulario objetivo
   const [goalTitle, setGoalTitle] = useState('');
   const [goalCategory, setGoalCategory] = useState<'Personal' | 'Professional' | 'Academic' | 'Health' | 'Financial'>('Personal');
   const [goalTargetDate, setGoalTargetDate] = useState(addDays(getTodayStr(), 30));
   const [goalMilestone, setGoalMilestone] = useState('');
 
-  // Note form state
+  // Estado formulario nota
   const [noteTitle, setNoteTitle] = useState('');
   const [noteContent, setNoteContent] = useState('');
   const [noteCategory, setNoteCategory] = useState('Ideas');
 
-  // Sync active tab with context quickAddType
   useEffect(() => {
     if (quickAddType) {
       setActiveTab(quickAddType);
     }
   }, [quickAddType]);
 
-  // Handle ESC key and keyboard shortcut 'n'
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && quickAddOpen) {
@@ -135,7 +132,7 @@ export function GlobalQuickAddModal() {
         examDate: examDate || addDays(getTodayStr(), 7),
         difficulty: examDifficulty,
         status: 'Upcoming',
-        topics: topicsList.length ? topicsList : [{ id: `tp-${Date.now()}-1`, name: 'Core Exam Review', completed: false }],
+        topics: topicsList.length ? topicsList : [{ id: `tp-${Date.now()}-1`, name: 'Repaso general del temario', completed: false }],
         notes: examNotes || undefined,
       });
       setExamSubject('');
@@ -150,7 +147,7 @@ export function GlobalQuickAddModal() {
         deadline: projectDeadline || addDays(getTodayStr(), 14),
         status: 'In Progress',
         notes: projectNotes || undefined,
-        milestones: [{ id: `m-${Date.now()}`, title: 'Project Kickoff & Outline', completed: false }],
+        milestones: [{ id: `m-${Date.now()}`, title: 'Definición inicial e inicio', completed: false }],
       });
       setProjectName('');
       setProjectDesc('');
@@ -171,7 +168,7 @@ export function GlobalQuickAddModal() {
         targetDate: goalTargetDate || addDays(getTodayStr(), 30),
         milestones: goalMilestone.trim()
           ? [{ id: `gm-${Date.now()}`, title: goalMilestone.trim(), completed: false }]
-          : [{ id: `gm-${Date.now()}`, title: 'First Milestone', completed: false }],
+          : [{ id: `gm-${Date.now()}`, title: 'Primer hito', completed: false }],
       });
       setGoalTitle('');
       setGoalMilestone('');
@@ -192,22 +189,21 @@ export function GlobalQuickAddModal() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
+      {/* Fondo */}
       <div
         className="fixed inset-0 bg-black/30 backdrop-blur-xs transition-opacity animate-fade-in"
         onClick={closeQuickAdd}
       />
 
-      {/* Modal Dialog */}
+      {/* Ventana modal */}
       <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-[#F0EBEF] z-10 overflow-hidden animate-fade-in">
-        {/* Top Header */}
         <div className="px-6 pt-5 pb-4 border-b border-[#F0EBEF] flex items-center justify-between">
           <div>
             <h2 className="text-base font-semibold text-[#29252B]">
-              Quick Create
+              Creación Rápida
             </h2>
             <p className="text-xs text-[#928A91]">
-              Capture anything into DAYLY in seconds
+              Añade cualquier elemento a DAYLY en segundos
             </p>
           </div>
           <button
@@ -218,7 +214,7 @@ export function GlobalQuickAddModal() {
           </button>
         </div>
 
-        {/* Type Switcher Tabs */}
+        {/* Pestañas de tipo */}
         <div className="flex border-b border-[#F0EBEF] bg-[#FCFAFB] px-4 overflow-x-auto">
           {QUICK_ADD_TABS.map((tab) => {
             const Icon = tab.icon;
@@ -244,20 +240,20 @@ export function GlobalQuickAddModal() {
           })}
         </div>
 
-        {/* Form Body */}
+        {/* Formulario */}
         <form onSubmit={handleCreate} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
-          {/* TASK FORM */}
+          {/* TAREA */}
           {activeTab === 'task' && (
             <div className="space-y-4">
               <div>
                 <label className="block text-xs font-medium text-[#29252B] mb-1">
-                  Task Title *
+                  Título de la Tarea *
                 </label>
                 <input
                   type="text"
                   required
                   autoFocus
-                  placeholder="e.g. Complete System Architecture review..."
+                  placeholder="ej. Repasar apuntes de arquitectura..."
                   value={taskTitle}
                   onChange={(e) => setTaskTitle(e.target.value)}
                   className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-[#F0EBEF] focus:outline-none focus:border-[#E5A6C0] bg-[#FCFAFB] focus:bg-white transition-colors"
@@ -267,7 +263,7 @@ export function GlobalQuickAddModal() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-[#29252B] mb-1">
-                    Due Date
+                    Fecha de Vencimiento
                   </label>
                   <input
                     type="date"
@@ -278,7 +274,7 @@ export function GlobalQuickAddModal() {
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-[#29252B] mb-1">
-                    Scheduled Time
+                    Hora Programada
                   </label>
                   <input
                     type="time"
@@ -292,35 +288,35 @@ export function GlobalQuickAddModal() {
               <div className="grid grid-cols-3 gap-2">
                 <div>
                   <label className="block text-xs font-medium text-[#29252B] mb-1">
-                    Time Slot
+                    Franja del Día
                   </label>
                   <select
                     value={taskTimeSlot}
                     onChange={(e) => setTaskTimeSlot(e.target.value as TimeSlot)}
                     className="w-full px-2.5 py-2 text-xs rounded-xl border border-[#F0EBEF] bg-[#FCFAFB]"
                   >
-                    <option value="morning">Morning</option>
-                    <option value="afternoon">Afternoon</option>
-                    <option value="evening">Evening</option>
+                    <option value="morning">Mañana</option>
+                    <option value="afternoon">Tarde</option>
+                    <option value="evening">Noche</option>
                   </select>
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-[#29252B] mb-1">
-                    Priority
+                    Prioridad
                   </label>
                   <select
                     value={taskPriority}
                     onChange={(e) => setTaskPriority(e.target.value as Priority)}
                     className="w-full px-2.5 py-2 text-xs rounded-xl border border-[#F0EBEF] bg-[#FCFAFB]"
                   >
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
+                    <option value="low">Baja</option>
+                    <option value="medium">Media</option>
+                    <option value="high">Alta</option>
                   </select>
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-[#29252B] mb-1">
-                    Category
+                    Categoría
                   </label>
                   <select
                     value={taskCategory}
@@ -328,11 +324,11 @@ export function GlobalQuickAddModal() {
                     className="w-full px-2.5 py-2 text-xs rounded-xl border border-[#F0EBEF] bg-[#FCFAFB]"
                   >
                     <option value="Personal">Personal</option>
-                    <option value="Academic">Academic</option>
-                    <option value="Work">Work</option>
-                    <option value="Health">Health</option>
-                    <option value="Project">Project</option>
-                    <option value="Finance">Finance</option>
+                    <option value="Académico">Académico</option>
+                    <option value="Trabajo">Trabajo</option>
+                    <option value="Salud">Salud</option>
+                    <option value="Proyecto">Proyecto</option>
+                    <option value="Finanzas">Finanzas</option>
                   </select>
                 </div>
               </div>
@@ -340,14 +336,14 @@ export function GlobalQuickAddModal() {
               {projects.length > 0 && (
                 <div>
                   <label className="block text-xs font-medium text-[#29252B] mb-1">
-                    Link to Project (Optional)
+                    Vincular a Proyecto (Opcional)
                   </label>
                   <select
                     value={taskProjectId}
                     onChange={(e) => setTaskProjectId(e.target.value)}
                     className="w-full px-3 py-2 text-xs rounded-xl border border-[#F0EBEF] bg-[#FCFAFB]"
                   >
-                    <option value="">None</option>
+                    <option value="">Ninguno</option>
                     {projects.map((p) => (
                       <option key={p.id} value={p.id}>
                         {p.name}
@@ -360,14 +356,14 @@ export function GlobalQuickAddModal() {
               {exams.length > 0 && (
                 <div>
                   <label className="block text-xs font-medium text-[#29252B] mb-1">
-                    Link to Exam (Optional)
+                    Vincular a Examen (Opcional)
                   </label>
                   <select
                     value={taskExamId}
                     onChange={(e) => setTaskExamId(e.target.value)}
                     className="w-full px-3 py-2 text-xs rounded-xl border border-[#F0EBEF] bg-[#FCFAFB]"
                   >
-                    <option value="">None</option>
+                    <option value="">Ninguno</option>
                     {exams.map((ex) => (
                       <option key={ex.id} value={ex.id}>
                         {ex.subject} ({ex.examDate})
@@ -379,18 +375,18 @@ export function GlobalQuickAddModal() {
             </div>
           )}
 
-          {/* EXAM FORM */}
+          {/* EXAMEN */}
           {activeTab === 'exam' && (
             <div className="space-y-4">
               <div>
                 <label className="block text-xs font-medium text-[#29252B] mb-1">
-                  Subject / Course *
+                  Asignatura / Curso *
                 </label>
                 <input
                   type="text"
                   required
                   autoFocus
-                  placeholder="e.g. Distributed Computing & Algorithms..."
+                  placeholder="ej. Algoritmos y Estructuras de Datos..."
                   value={examSubject}
                   onChange={(e) => setExamSubject(e.target.value)}
                   className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-[#F0EBEF] focus:outline-none focus:border-[#E5A6C0] bg-[#FCFAFB]"
@@ -400,7 +396,7 @@ export function GlobalQuickAddModal() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-[#29252B] mb-1">
-                    Exam Date *
+                    Fecha del Examen *
                   </label>
                   <input
                     type="date"
@@ -412,27 +408,27 @@ export function GlobalQuickAddModal() {
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-[#29252B] mb-1">
-                    Difficulty
+                    Dificultad
                   </label>
                   <select
                     value={examDifficulty}
                     onChange={(e) => setExamDifficulty(e.target.value as any)}
                     className="w-full px-3 py-2 text-xs rounded-xl border border-[#F0EBEF] bg-[#FCFAFB]"
                   >
-                    <option value="Easy">Easy</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Hard">Hard</option>
+                    <option value="Easy">Fácil</option>
+                    <option value="Medium">Media</option>
+                    <option value="Hard">Difícil</option>
                   </select>
                 </div>
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-[#29252B] mb-1">
-                  Topics to Cover (one per line)
+                  Temas a estudiar (uno por línea)
                 </label>
                 <textarea
                   rows={3}
-                  placeholder="Topic 1: Consistency models&#10;Topic 2: Consensus algorithms&#10;Topic 3: Practice mock questions"
+                  placeholder="Tema 1: Grafos y árboles&#10;Tema 2: Programación dinámica&#10;Tema 3: Simulacro de examen"
                   value={examTopicsInput}
                   onChange={(e) => setExamTopicsInput(e.target.value)}
                   className="w-full px-3 py-2 text-xs rounded-xl border border-[#F0EBEF] bg-[#FCFAFB]"
@@ -441,18 +437,18 @@ export function GlobalQuickAddModal() {
             </div>
           )}
 
-          {/* PROJECT FORM */}
+          {/* PROYECTO */}
           {activeTab === 'project' && (
             <div className="space-y-4">
               <div>
                 <label className="block text-xs font-medium text-[#29252B] mb-1">
-                  Project Name *
+                  Nombre del Proyecto *
                 </label>
                 <input
                   type="text"
                   required
                   autoFocus
-                  placeholder="e.g. Design Studio Launch..."
+                  placeholder="ej. Rediseño del sitio web..."
                   value={projectName}
                   onChange={(e) => setProjectName(e.target.value)}
                   className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-[#F0EBEF] bg-[#FCFAFB]"
@@ -461,11 +457,11 @@ export function GlobalQuickAddModal() {
 
               <div>
                 <label className="block text-xs font-medium text-[#29252B] mb-1">
-                  Description
+                  Descripción
                 </label>
                 <textarea
                   rows={2}
-                  placeholder="Brief overview of goals and scope..."
+                  placeholder="Breve resumen de metas y alcance..."
                   value={projectDesc}
                   onChange={(e) => setProjectDesc(e.target.value)}
                   className="w-full px-3 py-2 text-xs rounded-xl border border-[#F0EBEF] bg-[#FCFAFB]"
@@ -474,7 +470,7 @@ export function GlobalQuickAddModal() {
 
               <div>
                 <label className="block text-xs font-medium text-[#29252B] mb-1">
-                  Target Deadline
+                  Fecha Límite
                 </label>
                 <input
                   type="date"
@@ -486,18 +482,18 @@ export function GlobalQuickAddModal() {
             </div>
           )}
 
-          {/* HABIT FORM */}
+          {/* HÁBITO */}
           {activeTab === 'habit' && (
             <div className="space-y-4">
               <div>
                 <label className="block text-xs font-medium text-[#29252B] mb-1">
-                  Habit Name *
+                  Nombre del Hábito *
                 </label>
                 <input
                   type="text"
                   required
                   autoFocus
-                  placeholder="e.g. Morning 10-minute meditation..."
+                  placeholder="ej. Meditación matutina de 10 min..."
                   value={habitName}
                   onChange={(e) => setHabitName(e.target.value)}
                   className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-[#F0EBEF] bg-[#FCFAFB]"
@@ -507,49 +503,49 @@ export function GlobalQuickAddModal() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-[#29252B] mb-1">
-                    Category
+                    Categoría
                   </label>
                   <select
                     value={habitCategory}
                     onChange={(e) => setHabitCategory(e.target.value)}
                     className="w-full px-3 py-2 text-xs rounded-xl border border-[#F0EBEF] bg-[#FCFAFB]"
                   >
-                    <option value="Health">Health</option>
-                    <option value="Academic">Academic</option>
+                    <option value="Salud">Salud</option>
+                    <option value="Académico">Académico</option>
                     <option value="Personal">Personal</option>
-                    <option value="Work">Work</option>
+                    <option value="Trabajo">Trabajo</option>
                   </select>
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-[#29252B] mb-1">
-                    Frequency
+                    Frecuencia
                   </label>
                   <select
                     value={habitFrequency}
                     onChange={(e) => setHabitFrequency(e.target.value as any)}
                     className="w-full px-3 py-2 text-xs rounded-xl border border-[#F0EBEF] bg-[#FCFAFB]"
                   >
-                    <option value="daily">Daily</option>
-                    <option value="weekdays">Weekdays</option>
-                    <option value="weekends">Weekends</option>
+                    <option value="daily">Todos los días</option>
+                    <option value="weekdays">Días laborables</option>
+                    <option value="weekends">Fines de semana</option>
                   </select>
                 </div>
               </div>
             </div>
           )}
 
-          {/* GOAL FORM */}
+          {/* OBJETIVO */}
           {activeTab === 'goal' && (
             <div className="space-y-4">
               <div>
                 <label className="block text-xs font-medium text-[#29252B] mb-1">
-                  Goal Title *
+                  Título del Objetivo *
                 </label>
                 <input
                   type="text"
                   required
                   autoFocus
-                  placeholder="e.g. Read 10 books on systems design..."
+                  placeholder="ej. Leer 10 libros de diseño..."
                   value={goalTitle}
                   onChange={(e) => setGoalTitle(e.target.value)}
                   className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-[#F0EBEF] bg-[#FCFAFB]"
@@ -559,7 +555,7 @@ export function GlobalQuickAddModal() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-[#29252B] mb-1">
-                    Category
+                    Categoría
                   </label>
                   <select
                     value={goalCategory}
@@ -567,15 +563,15 @@ export function GlobalQuickAddModal() {
                     className="w-full px-3 py-2 text-xs rounded-xl border border-[#F0EBEF] bg-[#FCFAFB]"
                   >
                     <option value="Personal">Personal</option>
-                    <option value="Academic">Academic</option>
-                    <option value="Professional">Professional</option>
-                    <option value="Health">Health</option>
-                    <option value="Financial">Financial</option>
+                    <option value="Académico">Académico</option>
+                    <option value="Profesional">Profesional</option>
+                    <option value="Salud">Salud</option>
+                    <option value="Financiero">Financiero</option>
                   </select>
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-[#29252B] mb-1">
-                    Target Date
+                    Fecha Objetivo
                   </label>
                   <input
                     type="date"
@@ -588,11 +584,11 @@ export function GlobalQuickAddModal() {
 
               <div>
                 <label className="block text-xs font-medium text-[#29252B] mb-1">
-                  First Milestone
+                  Primer Hito
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Finish reading 'Thinking in Systems'..."
+                  placeholder="ej. Terminar el primer libro..."
                   value={goalMilestone}
                   onChange={(e) => setGoalMilestone(e.target.value)}
                   className="w-full px-3 py-2 text-xs rounded-xl border border-[#F0EBEF] bg-[#FCFAFB]"
@@ -601,18 +597,18 @@ export function GlobalQuickAddModal() {
             </div>
           )}
 
-          {/* NOTE FORM */}
+          {/* NOTA */}
           {activeTab === 'note' && (
             <div className="space-y-4">
               <div>
                 <label className="block text-xs font-medium text-[#29252B] mb-1">
-                  Note Title *
+                  Título de la Nota *
                 </label>
                 <input
                   type="text"
                   required
                   autoFocus
-                  placeholder="e.g. Thoughts on typography & space..."
+                  placeholder="ej. Reflexiones sobre diseño y espacio..."
                   value={noteTitle}
                   onChange={(e) => setNoteTitle(e.target.value)}
                   className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-[#F0EBEF] bg-[#FCFAFB]"
@@ -621,11 +617,11 @@ export function GlobalQuickAddModal() {
 
               <div>
                 <label className="block text-xs font-medium text-[#29252B] mb-1">
-                  Category
+                  Categoría
                 </label>
                 <input
                   type="text"
-                  placeholder="Ideas, Research, Quotes..."
+                  placeholder="Ideas, Lectura, Citas..."
                   value={noteCategory}
                   onChange={(e) => setNoteCategory(e.target.value)}
                   className="w-full px-3 py-2 text-xs rounded-xl border border-[#F0EBEF] bg-[#FCFAFB]"
@@ -634,11 +630,11 @@ export function GlobalQuickAddModal() {
 
               <div>
                 <label className="block text-xs font-medium text-[#29252B] mb-1">
-                  Content
+                  Contenido
                 </label>
                 <textarea
                   rows={4}
-                  placeholder="Write your note or idea here..."
+                  placeholder="Escribe tus notas o reflexiones aquí..."
                   value={noteContent}
                   onChange={(e) => setNoteContent(e.target.value)}
                   className="w-full px-3 py-2 text-xs rounded-xl border border-[#F0EBEF] bg-[#FCFAFB]"
@@ -647,20 +643,20 @@ export function GlobalQuickAddModal() {
             </div>
           )}
 
-          {/* Footer Submit Buttons */}
+          {/* Pie de guardado */}
           <div className="pt-4 border-t border-[#F0EBEF] flex items-center justify-end space-x-3">
             <button
               type="button"
               onClick={closeQuickAdd}
               className="px-4 py-2 rounded-xl text-xs font-medium text-[#928A91] hover:text-[#29252B] hover:bg-[#FCFAFB] transition-colors"
             >
-              Cancel
+              Cancelar
             </button>
             <button
               type="submit"
               className="px-5 py-2 rounded-xl text-xs font-semibold bg-[#FBEFF4] hover:bg-[#F7EAF0] text-[#29252B] border border-[#E5A6C0] shadow-2xs hover:shadow-xs active:scale-98 transition-all"
             >
-              Save {QUICK_ADD_TABS.find((t) => t.id === activeTab)?.label}
+              Guardar {QUICK_ADD_TABS.find((t) => t.id === activeTab)?.label}
             </button>
           </div>
         </form>

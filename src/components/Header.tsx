@@ -15,9 +15,9 @@ export function Header({ title, subtitle }: HeaderProps) {
 
   const greeting = useMemo(() => {
     const hour = new Date().getHours();
-    if (hour < 12) return 'Good morning';
-    if (hour < 18) return 'Good afternoon';
-    return 'Good evening';
+    if (hour < 12) return 'Buenos días';
+    if (hour < 20) return 'Buenas tardes';
+    return 'Buenas noches';
   }, []);
 
   const todayLong = useMemo(() => {
@@ -27,7 +27,7 @@ export function Header({ title, subtitle }: HeaderProps) {
   return (
     <header className="w-full bg-white/80 backdrop-blur-md border-b border-[#F0EBEF] sticky top-0 z-30 px-4 sm:px-8 py-4 transition-all">
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        {/* Left: Greeting & Date or Page Title */}
+        {/* Saludo y Fecha o Título de Página */}
         <div>
           {title ? (
             <div>
@@ -47,7 +47,7 @@ export function Header({ title, subtitle }: HeaderProps) {
                   {greeting}, {settings.userName || 'Alex'}
                 </span>
                 <span className="inline-flex items-center text-[11px] text-[#D68EAD] bg-[#FBEFF4] px-2 py-0.5 rounded-full font-medium border border-[#F7EAF0]">
-                  <Sparkles size={11} className="mr-1" /> Focus mode
+                  <Sparkles size={11} className="mr-1" /> Modo enfoque
                 </span>
               </div>
               <p className="text-xs text-[#928A91] mt-0.5 font-medium">
@@ -57,20 +57,20 @@ export function Header({ title, subtitle }: HeaderProps) {
           )}
         </div>
 
-        {/* Right: Quick-add and shortcuts */}
+        {/* Acciones Rápidas */}
         <div className="flex items-center space-x-2.5 self-start sm:self-auto">
           <button
             onClick={() => openQuickAdd('task')}
             className="flex items-center space-x-2 bg-[#FBEFF4] hover:bg-[#F7EAF0] text-[#29252B] hover:text-[#29252B] border border-[#F0EBEF] hover:border-[#E5A6C0] px-3.5 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all shadow-2xs hover:shadow-xs active:scale-98"
           >
             <Plus size={15} className="text-[#D68EAD]" />
-            <span>Quick Add</span>
+            <span>Añadir Rápido</span>
           </button>
 
           <button
             onClick={() => setActiveTab('settings')}
             className="w-9 h-9 rounded-xl border border-[#F0EBEF] hover:border-[#E5A6C0] bg-white hover:bg-[#FCFAFB] flex items-center justify-center text-[#928A91] hover:text-[#29252B] transition-colors"
-            title="Settings & Data Management"
+            title="Configuración y Gestión de Datos"
           >
             <Settings size={16} />
           </button>

@@ -1,15 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Sparkles,
   Plus,
   Flame,
   Check,
-  X,
   Trash2,
-  Calendar,
-  Award,
 } from 'lucide-react';
 import { useDayly } from '@/context/DaylyContext';
 import { getTodayStr, addDays, parseISODate } from '@/utils/dateUtils';
@@ -20,18 +17,16 @@ export function HabitsView() {
 
   const todayStr = getTodayStr();
 
-  // Past 7 days array (from 6 days ago up to today)
+  // Últimos 7 días
   const rollingDays: string[] = [];
   for (let i = 6; i >= 0; i--) {
     rollingDays.push(addDays(todayStr, -i));
   }
 
-  // Calculate streak for a habit
   const calculateStreak = (habit: Habit): number => {
     let streak = 0;
     let checkDate = todayStr;
 
-    // If today is checked, count starts at today; if not yet checked today, check yesterday
     if (!habit.history[checkDate]) {
       checkDate = addDays(todayStr, -1);
     }
@@ -44,9 +39,22 @@ export function HabitsView() {
     return streak;
   };
 
+  const translateFrequency = (freq: string) => {
+    switch (freq) {
+      case 'daily':
+        return 'Todos los días';
+      case 'weekdays':
+        return 'Días laborables';
+      case 'weekends':
+        return 'Fines de semana';
+      default:
+        return freq;
+    }
+  };
+
   return (
     <div className="space-y-6 sm:space-y-8 animate-fade-in pb-16">
-      {/* Header */}
+      {/* Cabecera */}
       <div className="bg-white p-5 rounded-2xl border border-[#F0EBEF] shadow-2xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2">
@@ -55,10 +63,10 @@ export function HabitsView() {
             </div>
             <div>
               <h2 className="text-xl font-bold tracking-tight text-[#29252B]">
-                Habits & Consistency
+                Hábitos y Constancia
               </h2>
               <p className="text-xs text-[#928A91]">
-                Small daily practices done consistently create remarkable outcomes.
+                Pequeñas prácticas diarias repetidas con constancia generan resultados extraordinarios.
               </p>
             </div>
           </div>
@@ -69,35 +77,35 @@ export function HabitsView() {
           className="flex items-center space-x-2 bg-[#FBEFF4] hover:bg-[#F7EAF0] text-[#29252B] border border-[#E5A6C0] px-4 py-2 rounded-xl text-xs font-semibold self-start sm:self-auto transition-all"
         >
           <Plus size={15} className="text-[#D68EAD]" />
-          <span>New Habit</span>
+          <span>Nuevo Hábito</span>
         </button>
       </div>
 
-      {/* Habits Table / Grid Card */}
+      {/* Tabla de Hábitos */}
       {habits.length === 0 ? (
         <div className="bg-white rounded-2xl border border-dashed border-[#F0EBEF] p-12 text-center">
           <Sparkles size={32} className="mx-auto text-[#928A91] mb-2" />
-          <h3 className="text-sm font-semibold text-[#29252B]">No habits yet</h3>
+          <h3 className="text-sm font-semibold text-[#29252B]">No hay hábitos creados</h3>
           <p className="text-xs text-[#928A91] mt-1 mb-4">
-            Build your morning routine, study habits, or mindfulness routines.
+            Construye tus rutinas matutinas, hábitos de estudio o momentos de descanso.
           </p>
           <button
             onClick={() => openQuickAdd('habit')}
             className="text-xs font-semibold px-4 py-2 bg-[#FBEFF4] text-[#D68EAD] rounded-xl border border-[#E5A6C0]"
           >
-            Add Habit
+            Añadir Hábito
           </button>
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-[#F0EBEF] shadow-2xs overflow-hidden">
-          {/* Header Row */}
+          {/* Fila de cabecera */}
           <div className="grid grid-cols-12 p-4 border-b border-[#F0EBEF] bg-[#FCFAFB] text-xs font-semibold uppercase tracking-wider text-[#928A91] items-center">
-            <div className="col-span-5 sm:col-span-4">Habit Name</div>
-            <div className="col-span-2 hidden sm:block text-center">Streak</div>
+            <div className="col-span-5 sm:col-span-4">Nombre del Hábito</div>
+            <div className="col-span-2 hidden sm:block text-center">Racha</div>
             <div className="col-span-7 sm:col-span-6 flex items-center justify-around">
               {rollingDays.map((d) => {
                 const dateObj = parseISODate(d);
-                const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'narrow' });
+                const dayName = dateObj.toLocaleDateString('es-ES', { weekday: 'narrow' });
                 const isToday = d === todayStr;
                 return (
                   <div key={d} className="text-center w-8">
@@ -113,7 +121,7 @@ export function HabitsView() {
             </div>
           </div>
 
-          {/* Habit Rows */}
+          {/* Filas de hábitos */}
           <div className="divide-y divide-[#F0EBEF]">
             {habits.map((habit) => {
               const streak = calculateStreak(habit);
@@ -122,7 +130,7 @@ export function HabitsView() {
                   key={habit.id}
                   className="grid grid-cols-12 p-4 items-center hover:bg-[#FCFAFB]/50 transition-colors group"
                 >
-                  {/* Title & Category */}
+                  {/* Título y Categoría */}
                   <div className="col-span-5 sm:col-span-4 pr-2">
                     <h3 className="text-xs sm:text-sm font-semibold text-[#29252B] truncate">
                       {habit.name}
@@ -131,21 +139,21 @@ export function HabitsView() {
                       <span className="text-[10px] text-[#928A91] bg-[#FCFAFB] px-1.5 py-0.2 rounded border border-[#F0EBEF]">
                         {habit.category}
                       </span>
-                      <span className="text-[10px] text-[#928A91] capitalize">
-                        {habit.frequency}
+                      <span className="text-[10px] text-[#928A91]">
+                        {translateFrequency(habit.frequency)}
                       </span>
                     </div>
                   </div>
 
-                  {/* Streak pill */}
+                  {/* Racha */}
                   <div className="col-span-2 hidden sm:flex items-center justify-center">
                     <div className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-[#FBEFF4] border border-[#F7EAF0] text-xs font-bold text-[#D68EAD]">
                       <Flame size={12} className="text-[#D68EAD]" />
-                      <span>{streak} days</span>
+                      <span>{streak} días</span>
                     </div>
                   </div>
 
-                  {/* 7-Day Matrix */}
+                  {/* Matriz de 7 Días */}
                   <div className="col-span-7 sm:col-span-6 flex items-center justify-around">
                     {rollingDays.map((dateStr) => {
                       const isCompleted = !!habit.history[dateStr];
@@ -162,7 +170,7 @@ export function HabitsView() {
                               ? 'border-2 border-dashed border-[#E5A6C0] bg-white hover:bg-[#FBEFF4]'
                               : 'border border-[#F0EBEF] bg-[#FCFAFB] hover:bg-white text-transparent'
                           }`}
-                          title={`Toggle ${habit.name} on ${dateStr}`}
+                          title={`Alternar ${habit.name} el ${dateStr}`}
                         >
                           {isCompleted && <Check size={14} className="stroke-[3]" />}
                         </button>
@@ -172,7 +180,7 @@ export function HabitsView() {
                     <button
                       onClick={() => deleteHabit(habit.id)}
                       className="opacity-0 group-hover:opacity-100 p-1 text-[#928A91] hover:text-[#DF7682] transition-opacity ml-1 hidden sm:block"
-                      title="Delete habit"
+                      title="Eliminar hábito"
                     >
                       <Trash2 size={14} />
                     </button>

@@ -28,27 +28,27 @@ interface NavItemConfig {
 }
 
 const NAV_ITEMS: NavItemConfig[] = [
-  { id: 'overview', label: 'Overview', icon: LayoutDashboard },
-  { id: 'month', label: 'My Month', icon: Calendar },
-  { id: 'week', label: 'My Week', icon: CalendarDays },
+  { id: 'overview', label: 'Vista General', icon: LayoutDashboard },
+  { id: 'month', label: 'Mi Mes', icon: Calendar },
+  { id: 'week', label: 'Mi Semana', icon: CalendarDays },
   {
     id: 'today',
-    label: 'Today',
+    label: 'Hoy',
     icon: SunMedium,
     badge: (c) => (c.todayTasks > 0 ? c.todayTasks : null),
   },
-  { id: 'tasks', label: 'Tasks', icon: CheckSquare },
+  { id: 'tasks', label: 'Tareas', icon: CheckSquare },
   {
     id: 'exams',
-    label: 'Exams',
+    label: 'Exámenes',
     icon: GraduationCap,
     badge: (c) => (c.upcomingExams > 0 ? c.upcomingExams : null),
   },
-  { id: 'projects', label: 'Projects', icon: FolderKanban },
-  { id: 'habits', label: 'Habits', icon: Sparkles },
-  { id: 'goals', label: 'Goals', icon: Flag },
-  { id: 'routines', label: 'Routines', icon: Repeat },
-  { id: 'notes', label: 'Notes', icon: FileText },
+  { id: 'projects', label: 'Proyectos', icon: FolderKanban },
+  { id: 'habits', label: 'Hábitos', icon: Sparkles },
+  { id: 'goals', label: 'Objetivos', icon: Flag },
+  { id: 'routines', label: 'Rutinas', icon: Repeat },
+  { id: 'notes', label: 'Notas', icon: FileText },
 ];
 
 export function Sidebar() {
@@ -66,7 +66,7 @@ export function Sidebar() {
   return (
     <aside className="hidden lg:flex w-64 flex-col justify-between border-r border-[#F0EBEF] bg-white h-screen sticky top-0 px-4 py-6 select-none shrink-0">
       <div className="flex flex-col space-y-6">
-        {/* Brand Header */}
+        {/* Encabezado de Marca */}
         <div className="px-3 flex items-center justify-between">
           <button
             onClick={() => setActiveTab('overview')}
@@ -80,30 +80,30 @@ export function Sidebar() {
                 DAYLY<span className="text-[#D68EAD]">.</span>
               </span>
               <span className="text-[10px] uppercase tracking-wider text-[#928A91] font-medium block mt-1">
-                Personal System
+                Sistema Personal
               </span>
             </div>
           </button>
         </div>
 
-        {/* Global Quick Action Button */}
+        {/* Botón Global de Acción Rápida */}
         <div className="px-1">
           <button
             onClick={() => openQuickAdd('task')}
             className="w-full flex items-center justify-center space-x-2 py-2 px-3.5 rounded-xl bg-[#FBEFF4] hover:bg-[#F7EAF0] text-[#29252B] border border-[#F0EBEF] text-xs font-medium tracking-wide transition-all shadow-2xs hover:shadow-xs active:scale-[0.99]"
           >
             <Plus size={15} className="text-[#D68EAD]" />
-            <span>New Activity</span>
+            <span>Nueva Actividad</span>
             <span className="ml-auto text-[10px] text-[#928A91] bg-white px-1.5 py-0.5 rounded border border-[#F0EBEF]">
               N
             </span>
           </button>
         </div>
 
-        {/* Navigation list */}
+        {/* Lista de Navegación */}
         <nav className="flex flex-col space-y-1 overflow-y-auto max-h-[calc(100vh-270px)] pr-1">
           <div className="text-[10px] uppercase font-semibold text-[#928A91] tracking-wider px-3 mb-1">
-            Planning & Life
+            Planificación y Vida
           </div>
 
           {NAV_ITEMS.map((item) => {
@@ -155,7 +155,7 @@ export function Sidebar() {
         </nav>
       </div>
 
-      {/* Bottom section: Settings & User */}
+      {/* Sección inferior: Configuración y Usuario */}
       <div className="pt-4 border-t border-[#F0EBEF] flex flex-col space-y-1 px-1">
         <button
           onClick={() => setActiveTab('settings')}
@@ -169,7 +169,7 @@ export function Sidebar() {
             size={16}
             className={activeTab === 'settings' ? 'text-[#D68EAD]' : 'text-[#928A91]'}
           />
-          <span>Settings & Backup</span>
+          <span>Configuración y Copias</span>
         </button>
 
         <div className="flex items-center space-x-2.5 px-3 py-2 mt-1">
@@ -180,7 +180,7 @@ export function Sidebar() {
             <span className="text-xs font-medium text-[#29252B] truncate">
               {settings.userName || 'Alex'}
             </span>
-            <span className="text-[10px] text-[#928A91]">Local Workspace</span>
+            <span className="text-[10px] text-[#928A91]">Espacio local</span>
           </div>
         </div>
       </div>

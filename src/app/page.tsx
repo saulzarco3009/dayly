@@ -7,7 +7,7 @@ import { MobileNav } from '@/components/MobileNav';
 import { Header } from '@/components/Header';
 import { GlobalQuickAddModal } from '@/components/GlobalQuickAddModal';
 
-// Views
+// Vistas
 import { OverviewView } from '@/views/OverviewView';
 import { MonthView } from '@/views/MonthView';
 import { WeekView } from '@/views/WeekView';
@@ -22,12 +22,11 @@ import { NotesView } from '@/views/NotesView';
 import { SettingsView } from '@/views/SettingsView';
 
 function AppContent() {
-  const { activeTab, setActiveTab, openQuickAdd, isLoaded } = useDayly();
+  const { activeTab, openQuickAdd } = useDayly();
 
-  // Global hotkeys (e.g. 'n' for Quick Add, ESC handled in modal)
+  // Atajos de teclado globales (ej. 'N' para Añadir Rápido)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if user is currently typing inside an input or textarea
       const target = e.target as HTMLElement;
       if (
         target.tagName === 'INPUT' ||
@@ -81,61 +80,61 @@ function AppContent() {
   const getHeaderMeta = () => {
     switch (activeTab) {
       case 'overview':
-        return undefined; // uses default personalized greeting & today's date
+        return undefined; // Saludo dinámico y fecha de hoy
       case 'month':
         return {
-          title: 'Monthly Planning',
-          subtitle: 'High-level calendar overview of exams, projects, and deadlines.',
+          title: 'Planificación Mensual',
+          subtitle: 'Perspectiva global de exámenes, proyectos y fechas clave del mes.',
         };
       case 'week':
         return {
-          title: 'Weekly Organizer',
-          subtitle: 'Balance your workload across Monday through Sunday.',
+          title: 'Organizador Semanal',
+          subtitle: 'Distribuye equilibradamente tu carga de lunes a domingo.',
         };
       case 'today':
         return {
-          title: 'Daily Planner',
-          subtitle: 'Morning, afternoon, and evening time blocks for peak focus.',
+          title: 'Planificador Diario',
+          subtitle: 'Bloques de mañana, tarde y noche para un enfoque sereno.',
         };
       case 'tasks':
         return {
-          title: 'Task Management',
-          subtitle: 'Complete list of all to-dos, priorities, and deadlines.',
+          title: 'Gestión de Tareas',
+          subtitle: 'Listado completo de pendientes, prioridades y fechas límite.',
         };
       case 'exams':
         return {
-          title: 'Exams & Study Sessions',
-          subtitle: 'Academic preparation tracking and countdowns.',
+          title: 'Exámenes y Sesiones de Estudio',
+          subtitle: 'Preparación académica sistemática y cuentas atrás.',
         };
       case 'projects':
         return {
-          title: 'Projects & Ventures',
-          subtitle: 'Track milestones, tasks, and deliverables.',
+          title: 'Proyectos e Iniciativas',
+          subtitle: 'Supervisión de entregables, hitos y avances.',
         };
       case 'habits':
         return {
-          title: 'Daily Habits',
-          subtitle: 'Maintain streaks and build consistency.',
+          title: 'Hábitos Diarios',
+          subtitle: 'Mantén rachas activas y consolida tu constancia.',
         };
       case 'goals':
         return {
-          title: 'Goals & Vision',
-          subtitle: 'Long-term milestones and progressive achievements.',
+          title: 'Objetivos y Visión',
+          subtitle: 'Metas a largo plazo divididas en hitos progresivos.',
         };
       case 'routines':
         return {
-          title: 'Routines & Rituals',
-          subtitle: 'Morning, study, work, and evening sequences.',
+          title: 'Rutinas y Rituales',
+          subtitle: 'Secuencias de mañana, estudio, trabajo y descanso.',
         };
       case 'notes':
         return {
-          title: 'Notes & Ideas',
-          subtitle: 'Distraction-free thoughts and study concepts.',
+          title: 'Notas e Ideas',
+          subtitle: 'Pensamientos, fragmentos de lectura y conceptos de estudio.',
         };
       case 'settings':
         return {
-          title: 'Settings & Data',
-          subtitle: 'Preferences and JSON backup management.',
+          title: 'Configuración y Datos',
+          subtitle: 'Preferencias, copias de seguridad en JSON y almacenamiento.',
         };
       default:
         return undefined;
@@ -146,10 +145,10 @@ function AppContent() {
 
   return (
     <div className="flex min-h-screen bg-[#FCFAFB]">
-      {/* Desktop Sidebar */}
+      {/* Barra lateral de escritorio */}
       <Sidebar />
 
-      {/* Main Workspace Area */}
+      {/* Espacio principal de trabajo */}
       <div className="flex-1 flex flex-col min-w-0">
         <Header title={headerMeta?.title} subtitle={headerMeta?.subtitle} />
 
@@ -158,10 +157,10 @@ function AppContent() {
         </main>
       </div>
 
-      {/* Mobile Navigation */}
+      {/* Navegación móvil */}
       <MobileNav />
 
-      {/* Global Quick Add Modal */}
+      {/* Modal global de creación rápida */}
       <GlobalQuickAddModal />
     </div>
   );

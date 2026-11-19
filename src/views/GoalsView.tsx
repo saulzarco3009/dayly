@@ -11,14 +11,13 @@ import {
   Target,
 } from 'lucide-react';
 import { useDayly } from '@/context/DaylyContext';
-import { formatFriendlyDate, formatLongDate, getTodayStr, getDaysDifference } from '@/utils/dateUtils';
-import { Goal, GoalMilestone } from '@/types/dayly';
+import { formatFriendlyDate, getTodayStr, getDaysDifference } from '@/utils/dateUtils';
+import { GoalMilestone } from '@/types/dayly';
 
 export function GoalsView() {
   const { goals, toggleGoalMilestone, deleteGoal, updateGoal, openQuickAdd } = useDayly();
   const todayStr = getTodayStr();
 
-  // Inline milestone adder (goalId -> title)
   const [newMilestoneText, setNewMilestoneText] = useState<Record<string, string>>({});
 
   const handleAddMilestone = (goalId: string) => {
@@ -41,9 +40,26 @@ export function GoalsView() {
     setNewMilestoneText((prev) => ({ ...prev, [goalId]: '' }));
   };
 
+  const translateCategory = (cat: string) => {
+    switch (cat) {
+      case 'Personal':
+        return 'Personal';
+      case 'Professional':
+        return 'Profesional';
+      case 'Academic':
+        return 'Académico';
+      case 'Health':
+        return 'Salud';
+      case 'Financial':
+        return 'Financiero';
+      default:
+        return cat;
+    }
+  };
+
   return (
     <div className="space-y-6 sm:space-y-8 animate-fade-in pb-16">
-      {/* Header */}
+      {/* Cabecera */}
       <div className="bg-white p-5 rounded-2xl border border-[#F0EBEF] shadow-2xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2">
@@ -52,10 +68,10 @@ export function GoalsView() {
             </div>
             <div>
               <h2 className="text-xl font-bold tracking-tight text-[#29252B]">
-                Long-Term Goals & Vision
+                Objetivos y Visión a Largo Plazo
               </h2>
               <p className="text-xs text-[#928A91]">
-                Define milestones, align priorities, and turn ambitious visions into progressive steps.
+                Define hitos, alinea tus prioridades y convierte grandes metas en pasos progresivos.
               </p>
             </div>
           </div>
@@ -66,23 +82,23 @@ export function GoalsView() {
           className="flex items-center space-x-2 bg-[#FBEFF4] hover:bg-[#F7EAF0] text-[#29252B] border border-[#E5A6C0] px-4 py-2 rounded-xl text-xs font-semibold self-start sm:self-auto transition-all"
         >
           <Plus size={15} className="text-[#D68EAD]" />
-          <span>New Goal</span>
+          <span>Nuevo Objetivo</span>
         </button>
       </div>
 
-      {/* Goals Grid */}
+      {/* Cuadrícula de Objetivos */}
       {goals.length === 0 ? (
         <div className="bg-white rounded-2xl border border-dashed border-[#F0EBEF] p-12 text-center">
           <Target size={32} className="mx-auto text-[#928A91] mb-2" />
-          <h3 className="text-sm font-semibold text-[#29252B]">No goals defined</h3>
+          <h3 className="text-sm font-semibold text-[#29252B]">No hay objetivos definidos</h3>
           <p className="text-xs text-[#928A91] mt-1 mb-4">
-            Set a personal or professional goal to orient your daily planning.
+            Establece metas personales o profesionales para orientar tu planificación diaria.
           </p>
           <button
             onClick={() => openQuickAdd('goal')}
             className="text-xs font-semibold px-4 py-2 bg-[#FBEFF4] text-[#D68EAD] rounded-xl border border-[#E5A6C0]"
           >
-            Create Goal
+            Crear Objetivo
           </button>
         </div>
       ) : (
@@ -98,16 +114,17 @@ export function GoalsView() {
                 key={goal.id}
                 className="bg-white rounded-2xl border border-[#F0EBEF] shadow-2xs hover:shadow-xs p-5 sm:p-6 transition-all space-y-4"
               >
-                {/* Header */}
+                {/* Cabecera */}
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className="flex items-center space-x-2 mb-1.5">
                       <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#FBEFF4] text-[#D68EAD] border border-[#F7EAF0]">
-                        {goal.category}
+                        {translateCategory(goal.category)}
                       </span>
                       <span className="text-[10px] text-[#928A91] flex items-center">
                         <Calendar size={11} className="mr-1" />
-                        Target: {formatFriendlyDate(goal.targetDate)}
+                        Meta: {formatFriendlyDate(goal.targetDate)}
+                        {daysLeft > 0 && ` (${daysLeft} días)`}
                       </span>
                     </div>
 
@@ -119,7 +136,7 @@ export function GoalsView() {
                   <button
                     onClick={() => deleteGoal(goal.id)}
                     className="p-1.5 text-[#928A91] hover:text-[#DF7682] transition-colors"
-                    title="Delete goal"
+                    title="Eliminar objetivo"
                   >
                     <Trash2 size={15} />
                   </button>
@@ -131,12 +148,12 @@ export function GoalsView() {
                   </p>
                 )}
 
-                {/* Progress */}
+                {/* Progreso */}
                 <div>
                   <div className="flex items-center justify-between text-xs text-[#928A91] mb-1.5">
-                    <span className="font-medium text-[#29252B]">Progress</span>
+                    <span className="font-medium text-[#29252B]">Progreso</span>
                     <span className="font-semibold text-[#D68EAD]">
-                      {completedM}/{totalM} milestones ({progress}%)
+                      {completedM}/{totalM} hitos ({progress}%)
                     </span>
                   </div>
                   <div className="w-full h-2 rounded-full bg-[#FCFAFB] border border-[#F0EBEF] overflow-hidden">
@@ -147,10 +164,10 @@ export function GoalsView() {
                   </div>
                 </div>
 
-                {/* Milestones list */}
+                {/* Hitos */}
                 <div className="space-y-2 pt-2 border-t border-[#F0EBEF]">
                   <span className="text-xs font-semibold uppercase tracking-wider text-[#928A91]">
-                    Key Milestones
+                    Hitos Clave
                   </span>
 
                   <div className="space-y-1.5">
@@ -187,11 +204,11 @@ export function GoalsView() {
                     ))}
                   </div>
 
-                  {/* Add Milestone inline */}
+                  {/* Añadir hito inline */}
                   <div className="flex items-center space-x-2 pt-1">
                     <input
                       type="text"
-                      placeholder="Add milestone..."
+                      placeholder="Añadir hito..."
                       value={newMilestoneText[goal.id] || ''}
                       onChange={(e) =>
                         setNewMilestoneText((prev) => ({
@@ -208,7 +225,7 @@ export function GoalsView() {
                       onClick={() => handleAddMilestone(goal.id)}
                       className="px-2.5 py-1.5 bg-[#FBEFF4] hover:bg-[#F7EAF0] text-[#29252B] border border-[#F0EBEF] rounded-xl text-xs font-medium"
                     >
-                      Add
+                      Añadir
                     </button>
                   </div>
                 </div>

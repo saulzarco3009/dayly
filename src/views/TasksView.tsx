@@ -4,7 +4,6 @@ import React, { useState, useMemo } from 'react';
 import {
   Search,
   Plus,
-  Filter,
   CheckCircle2,
   Circle,
   Clock,
@@ -14,7 +13,6 @@ import {
   GraduationCap,
   FolderKanban,
   ArrowUpDown,
-  Tag,
   X,
 } from 'lucide-react';
 import { useDayly } from '@/context/DaylyContext';
@@ -37,17 +35,17 @@ export function TasksView() {
 
   const todayStr = getTodayStr();
 
-  // Search & Filters state
+  // Búsqueda y filtros
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'in_progress' | 'completed'>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<SortOption>('dueDate');
 
-  // Modal / Drawer state for full editing
+  // Modal de edición
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
-  // Fast inline creator
+  // Creador rápido
   const [fastTitle, setFastTitle] = useState('');
   const [fastDate, setFastDate] = useState(todayStr);
   const [fastPriority, setFastPriority] = useState<Priority>('medium');
@@ -60,11 +58,9 @@ export function TasksView() {
     return ['all', ...Array.from(set)];
   }, [tasks]);
 
-  // Filtered and sorted tasks
   const filteredTasks = useMemo(() => {
     return tasks
       .filter((task) => {
-        // Search query
         if (searchQuery.trim()) {
           const q = searchQuery.toLowerCase();
           const matchesTitle = task.title.toLowerCase().includes(q);
@@ -73,15 +69,12 @@ export function TasksView() {
           if (!matchesTitle && !matchesDesc && !matchesNotes) return false;
         }
 
-        // Status
         if (statusFilter === 'pending' && task.status === 'completed') return false;
         if (statusFilter === 'completed' && task.status !== 'completed') return false;
         if (statusFilter === 'in_progress' && task.status !== 'in_progress') return false;
 
-        // Priority
         if (priorityFilter !== 'all' && task.priority !== priorityFilter) return false;
 
-        // Category
         if (categoryFilter !== 'all' && task.category.toLowerCase() !== categoryFilter.toLowerCase())
           return false;
 
@@ -120,15 +113,15 @@ export function TasksView() {
 
   return (
     <div className="space-y-6 animate-fade-in pb-16">
-      {/* Top Header & Fast Creation Bar */}
+      {/* Barra Superior y Creación Rápida */}
       <div className="bg-white p-5 rounded-2xl border border-[#F0EBEF] shadow-2xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h2 className="text-xl font-bold tracking-tight text-[#29252B]">
-              Tasks & To-Dos
+              Tareas y Pendientes
             </h2>
             <p className="text-xs text-[#928A91]">
-              Manage and track every task across projects, academics, and personal life.
+              Gestiona y supervisa cada tarea en tus proyectos, estudios y vida personal.
             </p>
           </div>
 
@@ -137,15 +130,15 @@ export function TasksView() {
             className="flex items-center space-x-2 bg-[#FBEFF4] hover:bg-[#F7EAF0] text-[#29252B] border border-[#E5A6C0] px-4 py-2 rounded-xl text-xs font-semibold self-start sm:self-auto transition-all"
           >
             <Plus size={15} className="text-[#D68EAD]" />
-            <span>New Task</span>
+            <span>Nueva Tarea</span>
           </button>
         </div>
 
-        {/* Quick Inline Creation Input */}
+        {/* Input de creación rápida */}
         <form onSubmit={handleFastAdd} className="flex flex-wrap sm:flex-nowrap gap-2 pt-2">
           <input
             type="text"
-            placeholder="Quick task title... (Press Enter to add)"
+            placeholder="Añade una tarea rápida... (Pulsa Enter)"
             value={fastTitle}
             onChange={(e) => setFastTitle(e.target.value)}
             className="flex-1 min-w-[200px] px-3.5 py-2 text-xs rounded-xl border border-[#F0EBEF] focus:border-[#E5A6C0] bg-[#FCFAFB] focus:bg-white focus:outline-none"
@@ -161,23 +154,23 @@ export function TasksView() {
             onChange={(e) => setFastPriority(e.target.value as Priority)}
             className="px-2.5 py-2 text-xs rounded-xl border border-[#F0EBEF] bg-[#FCFAFB]"
           >
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
+            <option value="low">Baja</option>
+            <option value="medium">Media</option>
+            <option value="high">Alta</option>
           </select>
           <button
             type="submit"
             className="px-4 py-2 bg-[#FBEFF4] text-[#29252B] hover:bg-[#F7EAF0] border border-[#F0EBEF] rounded-xl text-xs font-semibold shrink-0"
           >
-            Add Task
+            Añadir
           </button>
         </form>
       </div>
 
-      {/* Filter and Search Bar */}
+      {/* Buscador y Filtros */}
       <div className="bg-white p-4 rounded-2xl border border-[#F0EBEF] shadow-2xs space-y-3">
         <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
-          {/* Search box */}
+          {/* Buscador */}
           <div className="relative flex-1 max-w-md">
             <Search
               size={15}
@@ -185,7 +178,7 @@ export function TasksView() {
             />
             <input
               type="text"
-              placeholder="Search tasks, notes or descriptions..."
+              placeholder="Buscar tareas, notas o descripciones..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-[#F0EBEF] focus:border-[#E5A6C0] bg-[#FCFAFB] focus:bg-white focus:outline-none"
@@ -200,62 +193,67 @@ export function TasksView() {
             )}
           </div>
 
-          {/* Sort Selector */}
+          {/* Ordenación */}
           <div className="flex items-center space-x-2 text-xs">
             <span className="text-[#928A91] flex items-center shrink-0">
-              <ArrowUpDown size={13} className="mr-1" /> Sort:
+              <ArrowUpDown size={13} className="mr-1" /> Ordenar:
             </span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
               className="px-2.5 py-1.5 rounded-xl border border-[#F0EBEF] bg-[#FCFAFB] text-xs font-medium text-[#29252B]"
             >
-              <option value="dueDate">Due Date</option>
-              <option value="priority">Priority</option>
-              <option value="title">Title (A-Z)</option>
-              <option value="status">Status</option>
+              <option value="dueDate">Fecha de vencimiento</option>
+              <option value="priority">Prioridad</option>
+              <option value="title">Título (A-Z)</option>
+              <option value="status">Estado</option>
             </select>
           </div>
         </div>
 
-        {/* Filters Row */}
+        {/* Fila de Filtros */}
         <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#F0EBEF]">
-          {/* Status Tabs */}
+          {/* Pestañas de estado */}
           <div className="flex items-center space-x-1 bg-[#FCFAFB] p-1 rounded-xl border border-[#F0EBEF]">
-            {(['all', 'pending', 'in_progress', 'completed'] as const).map((s) => (
+            {[
+              { id: 'all', label: 'Todas' },
+              { id: 'pending', label: 'Pendientes' },
+              { id: 'in_progress', label: 'En progreso' },
+              { id: 'completed', label: 'Completadas' },
+            ].map((s) => (
               <button
-                key={s}
-                onClick={() => setStatusFilter(s)}
-                className={`text-[11px] font-medium px-2.5 py-1 rounded-lg capitalize transition-all ${
-                  statusFilter === s
+                key={s.id}
+                onClick={() => setStatusFilter(s.id as any)}
+                className={`text-[11px] font-medium px-2.5 py-1 rounded-lg transition-all ${
+                  statusFilter === s.id
                     ? 'bg-white text-[#29252B] font-semibold shadow-2xs border border-[#F0EBEF]'
                     : 'text-[#928A91] hover:text-[#29252B]'
                 }`}
               >
-                {s.replace('_', ' ')}
+                {s.label}
               </button>
             ))}
           </div>
 
-          {/* Priority filter */}
+          {/* Filtro prioridad */}
           <select
             value={priorityFilter}
             onChange={(e) => setPriorityFilter(e.target.value)}
             className="px-2.5 py-1.5 text-xs rounded-xl border border-[#F0EBEF] bg-[#FCFAFB]"
           >
-            <option value="all">All Priorities</option>
-            <option value="high">High Priority</option>
-            <option value="medium">Medium Priority</option>
-            <option value="low">Low Priority</option>
+            <option value="all">Todas las prioridades</option>
+            <option value="high">Prioridad Alta</option>
+            <option value="medium">Prioridad Media</option>
+            <option value="low">Prioridad Baja</option>
           </select>
 
-          {/* Category filter */}
+          {/* Filtro categoría */}
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="px-2.5 py-1.5 text-xs rounded-xl border border-[#F0EBEF] bg-[#FCFAFB] capitalize"
+            className="px-2.5 py-1.5 text-xs rounded-xl border border-[#F0EBEF] bg-[#FCFAFB]"
           >
-            <option value="all">All Categories</option>
+            <option value="all">Todas las categorías</option>
             {categories
               .filter((c) => c !== 'all')
               .map((c) => (
@@ -266,16 +264,16 @@ export function TasksView() {
           </select>
 
           <span className="ml-auto text-xs text-[#928A91]">
-            Showing {filteredTasks.length} {filteredTasks.length === 1 ? 'task' : 'tasks'}
+            Mostrando {filteredTasks.length} {filteredTasks.length === 1 ? 'tarea' : 'tareas'}
           </span>
         </div>
       </div>
 
-      {/* Task List */}
+      {/* Lista de Tareas */}
       <div className="space-y-2.5">
         {filteredTasks.length === 0 ? (
           <div className="bg-white rounded-2xl border border-dashed border-[#F0EBEF] p-12 text-center">
-            <p className="text-xs text-[#928A91] mb-2">No tasks found matching your filters.</p>
+            <p className="text-xs text-[#928A91] mb-2">No hay tareas que coincidan con los filtros.</p>
             <button
               onClick={() => {
                 setSearchQuery('');
@@ -285,7 +283,7 @@ export function TasksView() {
               }}
               className="text-xs font-semibold text-[#D68EAD] hover:underline"
             >
-              Reset Filters
+              Restablecer filtros
             </button>
           </div>
         ) : (
@@ -304,7 +302,6 @@ export function TasksView() {
                 }`}
               >
                 <div className="flex items-start justify-between gap-3">
-                  {/* Left: Checkbox & Info */}
                   <div className="flex items-start space-x-3.5 flex-1 min-w-0">
                     <button
                       onClick={() => toggleTaskComplete(task.id)}
@@ -334,7 +331,7 @@ export function TasksView() {
                               : 'bg-[#FCFAFB] text-[#928A91] border border-[#F0EBEF]'
                           }`}
                         >
-                          {task.priority}
+                          {task.priority === 'high' ? 'Alta' : task.priority === 'medium' ? 'Media' : 'Baja'}
                         </span>
 
                         <span className="text-[10px] text-[#928A91] bg-[#FCFAFB] px-1.5 py-0.5 rounded border border-[#F0EBEF]">
@@ -343,7 +340,7 @@ export function TasksView() {
 
                         {task.status === 'in_progress' && (
                           <span className="text-[9px] font-semibold text-[#D68EAD] bg-[#FBEFF4] px-1.5 py-0.5 rounded">
-                            In Progress
+                            En progreso
                           </span>
                         )}
                       </div>
@@ -354,7 +351,6 @@ export function TasksView() {
                         </p>
                       )}
 
-                      {/* Meta badges: Due Date, Project, Exam */}
                       <div className="flex flex-wrap items-center gap-2 mt-2 text-[10px] text-[#928A91]">
                         <span className="flex items-center">
                           <Calendar size={11} className="mr-1 text-[#928A91]" />
@@ -385,19 +381,19 @@ export function TasksView() {
                     </div>
                   </div>
 
-                  {/* Right Actions */}
+                  {/* Acciones */}
                   <div className="flex items-center space-x-1 shrink-0">
                     <button
                       onClick={() => setEditingTask(task)}
                       className="p-1.5 text-[#928A91] hover:text-[#29252B] hover:bg-[#FCFAFB] rounded-lg transition-colors"
-                      title="Edit task"
+                      title="Editar tarea"
                     >
                       <Edit3 size={15} />
                     </button>
                     <button
                       onClick={() => deleteTask(task.id)}
                       className="p-1.5 text-[#928A91] hover:text-[#DF7682] hover:bg-[#FDF0F2] rounded-lg transition-colors"
-                      title="Delete task"
+                      title="Eliminar tarea"
                     >
                       <Trash2 size={15} />
                     </button>
@@ -409,7 +405,7 @@ export function TasksView() {
         )}
       </div>
 
-      {/* FULL TASK EDITING MODAL */}
+      {/* MODAL DE EDICIÓN DE TAREA */}
       {editingTask && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
@@ -418,7 +414,7 @@ export function TasksView() {
           />
           <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-[#F0EBEF] z-10 overflow-hidden animate-fade-in p-6 space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-[#F0EBEF]">
-              <h3 className="text-base font-semibold text-[#29252B]">Edit Task</h3>
+              <h3 className="text-base font-semibold text-[#29252B]">Editar Tarea</h3>
               <button
                 onClick={() => setEditingTask(null)}
                 className="w-8 h-8 rounded-full bg-[#FCFAFB] border border-[#F0EBEF] flex items-center justify-center text-[#928A91] hover:text-[#29252B]"
@@ -430,7 +426,7 @@ export function TasksView() {
             <div className="space-y-3">
               <div>
                 <label className="block text-xs font-medium text-[#29252B] mb-1">
-                  Title
+                  Título
                 </label>
                 <input
                   type="text"
@@ -444,7 +440,7 @@ export function TasksView() {
 
               <div>
                 <label className="block text-xs font-medium text-[#29252B] mb-1">
-                  Description
+                  Descripción
                 </label>
                 <textarea
                   rows={2}
@@ -459,7 +455,7 @@ export function TasksView() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-[#29252B] mb-1">
-                    Due Date
+                    Fecha de Vencimiento
                   </label>
                   <input
                     type="date"
@@ -472,7 +468,7 @@ export function TasksView() {
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-[#29252B] mb-1">
-                    Scheduled Time
+                    Hora Programada
                   </label>
                   <input
                     type="time"
@@ -491,7 +487,7 @@ export function TasksView() {
               <div className="grid grid-cols-3 gap-2">
                 <div>
                   <label className="block text-xs font-medium text-[#29252B] mb-1">
-                    Priority
+                    Prioridad
                   </label>
                   <select
                     value={editingTask.priority}
@@ -503,14 +499,14 @@ export function TasksView() {
                     }
                     className="w-full px-2.5 py-2 text-xs rounded-xl border border-[#F0EBEF] bg-[#FCFAFB]"
                   >
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
+                    <option value="low">Baja</option>
+                    <option value="medium">Media</option>
+                    <option value="high">Alta</option>
                   </select>
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-[#29252B] mb-1">
-                    Status
+                    Estado
                   </label>
                   <select
                     value={editingTask.status}
@@ -522,14 +518,14 @@ export function TasksView() {
                     }
                     className="w-full px-2.5 py-2 text-xs rounded-xl border border-[#F0EBEF] bg-[#FCFAFB]"
                   >
-                    <option value="pending">Pending</option>
-                    <option value="in_progress">In Progress</option>
-                    <option value="completed">Completed</option>
+                    <option value="pending">Pendiente</option>
+                    <option value="in_progress">En progreso</option>
+                    <option value="completed">Completada</option>
                   </select>
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-[#29252B] mb-1">
-                    Category
+                    Categoría
                   </label>
                   <input
                     type="text"
@@ -544,7 +540,7 @@ export function TasksView() {
 
               <div>
                 <label className="block text-xs font-medium text-[#29252B] mb-1">
-                  Additional Notes
+                  Notas Adicionales
                 </label>
                 <textarea
                   rows={2}
@@ -563,7 +559,7 @@ export function TasksView() {
                 onClick={() => setEditingTask(null)}
                 className="px-3 py-1.5 text-xs text-[#928A91]"
               >
-                Cancel
+                Cancelar
               </button>
               <button
                 type="button"
@@ -573,7 +569,7 @@ export function TasksView() {
                 }}
                 className="px-4 py-1.5 text-xs font-semibold bg-[#FBEFF4] border border-[#E5A6C0] text-[#29252B] rounded-xl"
               >
-                Save Changes
+                Guardar Cambios
               </button>
             </div>
           </div>

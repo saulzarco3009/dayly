@@ -7,36 +7,31 @@ import {
   Search,
   Pin,
   Trash2,
-  Edit2,
-  Calendar,
   X,
-  Tag,
 } from 'lucide-react';
 import { useDayly } from '@/context/DaylyContext';
 import { formatFriendlyDate } from '@/utils/dateUtils';
 import { Note } from '@/types/dayly';
 
 export function NotesView() {
-  const { notes, addNote, updateNote, deleteNote, openQuickAdd } = useDayly();
+  const { notes, updateNote, deleteNote, openQuickAdd } = useDayly();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState('Todas');
   const [activeEditingNote, setActiveEditingNote] = useState<Note | null>(null);
 
-  // Extract distinct categories
   const categories = useMemo(() => {
     const set = new Set<string>();
     notes.forEach((n) => {
       if (n.category) set.add(n.category);
     });
-    return ['All', ...Array.from(set)];
+    return ['Todas', ...Array.from(set)];
   }, [notes]);
 
-  // Filter notes
   const filteredNotes = useMemo(() => {
     return notes
       .filter((n) => {
-        if (selectedCategory !== 'All' && n.category.toLowerCase() !== selectedCategory.toLowerCase()) {
+        if (selectedCategory !== 'Todas' && n.category.toLowerCase() !== selectedCategory.toLowerCase()) {
           return false;
         }
         if (searchQuery.trim()) {
@@ -48,7 +43,6 @@ export function NotesView() {
         return true;
       })
       .sort((a, b) => {
-        // Pinned notes first
         if (a.isPinned && !b.isPinned) return -1;
         if (!a.isPinned && b.isPinned) return 1;
         return b.updatedAt.localeCompare(a.updatedAt);
@@ -61,7 +55,7 @@ export function NotesView() {
 
   return (
     <div className="space-y-6 sm:space-y-8 animate-fade-in pb-16">
-      {/* Header */}
+      {/* Cabecera */}
       <div className="bg-white p-5 rounded-2xl border border-[#F0EBEF] shadow-2xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2">
@@ -70,10 +64,10 @@ export function NotesView() {
             </div>
             <div>
               <h2 className="text-xl font-bold tracking-tight text-[#29252B]">
-                Notes & Reflections
+                Notas y Reflexiones
               </h2>
               <p className="text-xs text-[#928A91]">
-                Distraction-free thoughts, reading notes, and creative ideas.
+                Pensamientos sin distracciones, citas de lectura e ideas creativas.
               </p>
             </div>
           </div>
@@ -84,11 +78,11 @@ export function NotesView() {
           className="flex items-center space-x-2 bg-[#FBEFF4] hover:bg-[#F7EAF0] text-[#29252B] border border-[#E5A6C0] px-4 py-2 rounded-xl text-xs font-semibold self-start sm:self-auto transition-all"
         >
           <Plus size={15} className="text-[#D68EAD]" />
-          <span>New Note</span>
+          <span>Nueva Nota</span>
         </button>
       </div>
 
-      {/* Search and Category Filter */}
+      {/* Buscador y Categorías */}
       <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
         <div className="relative flex-1 max-w-md">
           <Search
@@ -97,7 +91,7 @@ export function NotesView() {
           />
           <input
             type="text"
-            placeholder="Search notes or concepts..."
+            placeholder="Buscar notas o conceptos..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-[#F0EBEF] bg-white focus:outline-none focus:border-[#E5A6C0]"
@@ -112,7 +106,6 @@ export function NotesView() {
           )}
         </div>
 
-        {/* Categories */}
         <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 sm:pb-0">
           {categories.map((cat) => (
             <button
@@ -130,19 +123,19 @@ export function NotesView() {
         </div>
       </div>
 
-      {/* Notes Grid */}
+      {/* Cuadrícula de Notas */}
       {filteredNotes.length === 0 ? (
         <div className="bg-white rounded-2xl border border-dashed border-[#F0EBEF] p-12 text-center">
           <FileText size={32} className="mx-auto text-[#928A91] mb-2" />
-          <h3 className="text-sm font-semibold text-[#29252B]">No notes found</h3>
+          <h3 className="text-sm font-semibold text-[#29252B]">No hay notas encontradas</h3>
           <p className="text-xs text-[#928A91] mt-1 mb-4">
-            Capture an idea, book excerpt, or study reflection.
+            Captura una idea, fragmento de lectura o reflexión de estudio.
           </p>
           <button
             onClick={() => openQuickAdd('note')}
             className="text-xs font-semibold px-4 py-2 bg-[#FBEFF4] text-[#D68EAD] rounded-xl border border-[#E5A6C0]"
           >
-            Create Note
+            Crear Nota
           </button>
         </div>
       ) : (
@@ -175,7 +168,7 @@ export function NotesView() {
                         togglePin(note);
                       }}
                       className="p-1 text-[#928A91] hover:text-[#D68EAD]"
-                      title={note.isPinned ? 'Unpin' : 'Pin to top'}
+                      title={note.isPinned ? 'Desfijar' : 'Fijar arriba'}
                     >
                       <Pin size={13} className={note.isPinned ? 'fill-[#D68EAD]' : ''} />
                     </button>
@@ -185,7 +178,7 @@ export function NotesView() {
                         deleteNote(note.id);
                       }}
                       className="p-1 text-[#928A91] hover:text-[#DF7682]"
-                      title="Delete note"
+                      title="Eliminar nota"
                     >
                       <Trash2 size={13} />
                     </button>
@@ -202,9 +195,9 @@ export function NotesView() {
               </div>
 
               <div className="mt-4 pt-3 border-t border-[#F0EBEF] flex items-center justify-between text-[10px] text-[#928A91]">
-                <span>Updated {formatFriendlyDate(note.updatedAt.slice(0, 10))}</span>
+                <span>Actualizada el {formatFriendlyDate(note.updatedAt.slice(0, 10))}</span>
                 <span className="text-[#D68EAD] font-medium group-hover:underline">
-                  Open Note &rarr;
+                  Abrir Nota &rarr;
                 </span>
               </div>
             </div>
@@ -212,7 +205,7 @@ export function NotesView() {
         </div>
       )}
 
-      {/* NOTE EDITOR MODAL */}
+      {/* MODAL EDITOR DE NOTA */}
       {activeEditingNote && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
@@ -245,7 +238,7 @@ export function NotesView() {
 
             <input
               type="text"
-              placeholder="Note title..."
+              placeholder="Título de la nota..."
               value={activeEditingNote.title}
               onChange={(e) =>
                 setActiveEditingNote({
@@ -258,7 +251,7 @@ export function NotesView() {
 
             <textarea
               rows={12}
-              placeholder="Write anything..."
+              placeholder="Escribe lo que quieras..."
               value={activeEditingNote.content}
               onChange={(e) =>
                 setActiveEditingNote({
@@ -271,7 +264,7 @@ export function NotesView() {
 
             <div className="flex items-center justify-between pt-3 border-t border-[#F0EBEF]">
               <span className="text-[11px] text-[#928A91]">
-                Created {formatFriendlyDate(activeEditingNote.createdAt.slice(0, 10))}
+                Creada el {formatFriendlyDate(activeEditingNote.createdAt.slice(0, 10))}
               </span>
 
               <div className="flex items-center space-x-2">
@@ -279,7 +272,7 @@ export function NotesView() {
                   onClick={() => setActiveEditingNote(null)}
                   className="px-3 py-1.5 text-xs text-[#928A91]"
                 >
-                  Close
+                  Cerrar
                 </button>
                 <button
                   onClick={() => {
@@ -288,7 +281,7 @@ export function NotesView() {
                   }}
                   className="px-4 py-2 text-xs font-semibold bg-[#FBEFF4] border border-[#E5A6C0] text-[#29252B] rounded-xl hover:bg-[#F7EAF0]"
                 >
-                  Save Note
+                  Guardar Nota
                 </button>
               </div>
             </div>
